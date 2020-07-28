@@ -1,5 +1,3 @@
 # Food Pantry
 
-
-Daniel Simango
-
+Bailey Niemiller
