@@ -21,6 +21,20 @@ if (process.env.DATABASE_URL) {
     // How long a client is allowed to remain idle before being closed.
     idleTimeoutMillis: 30000
   };
+} else if (process.env.HOST) {
+  console.log('host');
+  config = {
+    user: process.env.USER,
+    password: process.env.PASSWORD,
+    host: process.env.HOST,
+    port: 5432,
+    database: process.env.DATABASE_NAME,
+    ssl: { rejectUnauthorized: false },
+    // Max number of clients in the pool
+    max: 10,
+    // How long a client is allowed to remain idle before being closed.
+    idleTimeoutMillis: 30000
+  };
 } else {
   config = {
     host: 'localhost',

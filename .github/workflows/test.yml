@@ -10,6 +10,9 @@ on:
     branches: [ master, dev ]
 
 jobs:
+  with:
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
   build:
 
     runs-on: ubuntu-latest
