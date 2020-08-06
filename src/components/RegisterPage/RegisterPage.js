@@ -58,7 +58,7 @@ class RegisterPage extends Component {
                     <input
                       type="text"
                       name="name"
-                      placeholder="Name"
+                      placeholder="Full Name"
                       className="userRegisterInput"
                       value={this.state.name}
                       onChange={this.handleInputChangeFor("name")}

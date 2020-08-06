@@ -1,0 +1,41 @@
+#clientInfo {
+  margin: 40px auto;
+}
+
+#clientInput {
+  margin: auto;
+  text-align: center;
+}
+
+#parkingLabel {
+  font-size: 25px;
+  font-family: 'Signika', sans-serif;
+
+}
+
+#parkingNumber {
+  width: 70px;
+  height: 80px;
+  font-size: 45px;
+}
+
+#checkInButton {
+  color: white;
+  font-size: 16px;
+  background-color: #b13324;
+  border: 1px solid #b13324;
+  border-radius: 50px;
+  transition: 200ms;
+  font-family: 'Signika', sans-serif;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+#checkInButton:hover {
+  border: 1px solid white;
+  transition: 200ms;
+}
+
+#clientQuestions {
+  margin: auto;
+}
