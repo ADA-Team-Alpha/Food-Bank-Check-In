@@ -28,7 +28,7 @@ CREATE TABLE "profile" (
 CREATE TABLE "order" (
 	"id" serial NOT NULL,
 	"account_id" integer NOT NULL,
-	"checkin_at" TIMESTAMP NOT NULL DEFAULT 'NOW()',
+	"checkin_at" TIMESTAMP NOT NULL DEFAULT NOW(),
 	"checkout_at" TIMESTAMP,
 	"location_id" integer NOT NULL,
 	"dietary_restrictions" TEXT,
