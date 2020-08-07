@@ -98,7 +98,8 @@ describe('Test a newly added account', () => {
         id: expect.any(Number),
         name: newUserName,
         email: newUserEmail,
-        access_level: 1
+        access_level: 1,
+        household_id: newUserHouseholdID
       });
       done();
     });
