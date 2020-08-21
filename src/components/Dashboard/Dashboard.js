@@ -7,6 +7,7 @@ import Table from "react-bootstrap/Table";
 import CheckCircleIcon from "@material-ui/icons/CheckCircle";
 import Card from "react-bootstrap/Card";
 import ManualOrder from "./ManualOrder";
+import AccountRequests from "./AccountRequests";
 import HomeIcon from "@material-ui/icons/Home";
 import "./Dashboard.css";
 
@@ -68,6 +69,7 @@ class Dashboard extends Component {
   render() {
     return (
       <>
+        <AccountRequests />
         <Container fluid id="dashContainer">
           {/* Dashboard title row */}
           <Row>
