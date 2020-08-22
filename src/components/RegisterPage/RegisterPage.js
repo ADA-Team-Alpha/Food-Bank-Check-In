@@ -9,6 +9,10 @@ import Toast from "react-bootstrap/Toast";
 import { withRouter } from "react-router-dom";
 import "./RegisterPage.css";
 
+// The RegisterPage component is similar to LoginPage
+// It displays 4 inputs, a name, email, household ID and password.
+// The user can choose to click "Login" if they already have
+// an account.  The RegisterPage is on the /register route.
 
 class RegisterPage extends Component {
   state = {
@@ -18,10 +22,17 @@ class RegisterPage extends Component {
     password: "",
   };
 
+  // registerUser function --> dispatches with a payload of the user name, email 
+  // household ID and passowrd to register that new user
   registerUser = (event) => {
     event.preventDefault();
 
-    if (this.state.name && this.state.email && this.state.household_id && this.state.password) {
+    if (
+      this.state.name &&
+      this.state.email &&
+      this.state.household_id &&
+      this.state.password
+    ) {
       this.props.dispatch({
         type: "REGISTER",
         payload: {
@@ -35,9 +46,10 @@ class RegisterPage extends Component {
       this.props.dispatch({ type: "REGISTRATION_INPUT_ERROR" });
     }
   };
+  // end registerUser
 
   componentDidUpdate() {
-    this.props.successfulRegistration && this.props.history.push('/login')
+    this.props.successfulRegistration && this.props.history.push("/login");
   }
 
   handleInputChangeFor = (propertyName) => (event) => {
@@ -105,18 +117,17 @@ class RegisterPage extends Component {
                     type="submit"
                     name="submit"
                     value="Register"
-                    id="loginButton"
+                    id="registerButton"
                   />
                 </div>
-                  <div id="errorDiv">
-                    {this.props.error && (
-                      <Toast style={{ border: "1px solid #b13324" }}>
-                        <Toast.Body>
-                          {this.props.error}
-                        </Toast.Body>
-                      </Toast>
-                    )}
-                  </div>
+                {/* If there were to be an error, this is where it is displayed. */}
+                <div id="errorDiv">
+                  {this.props.error && (
+                    <Toast style={{ border: "1px solid #b13324" }}>
+                      <Toast.Body>{this.props.error}</Toast.Body>
+                    </Toast>
+                  )}
+                </div>
               </form>
             </Card>
           </Row>
@@ -134,7 +145,9 @@ class RegisterPage extends Component {
   }
 }
 
-// Instead of taking everything from state, we just want the error messages.
+// Bringing in the errors for error handling, successfulRegistration 
+// to push history to /login, and loginMode so as soon as a new user
+// registers they are then logged in automatically.
 const mapStateToProps = (state) => ({
   error: state.errors.registrationMessage,
   successfulRegistration: state.login.successfulRegistration,

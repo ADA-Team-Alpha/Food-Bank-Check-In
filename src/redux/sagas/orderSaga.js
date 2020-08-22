@@ -10,6 +10,7 @@ function* submitCheckIn(action) {
   }
 }
 
+// will be fired on "FETCH_WAIT_TIME" actions
 function* fetchWaitTime() {
   try {
     // This is the string of the wait minutes to return. Since the return value from the

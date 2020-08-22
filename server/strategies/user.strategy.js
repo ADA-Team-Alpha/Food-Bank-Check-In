@@ -2,20 +2,23 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const encryptLib = require('../modules/encryption');
 const pool = require('../modules/pool');
+const sqlSelect = require('../sql/sqlSelects');
 
+// If a user is made with a LocalStrategy serialize it.
 passport.serializeUser((user, done) => {
   done(null, user.id);
 });
+
+/**
+ * Log a user in with passport then get their information from the database.
+ */
 
 passport.deserializeUser(async (id, done) => {
   const conn = await pool.connect();
   try {
     // Get the various attributes about a ussr.
     const getUserInfoQuery = {};
-    getUserInfoQuery.text = `SELECT account.id, account."name", account.email, account.access_level, account.active,
-                            profile.household_id, profile.latest_order FROM account
-                            LEFT JOIN profile ON account.id = profile.account_id
-                            WHERE account.id = $1;`;
+    getUserInfoQuery.text = sqlSelect.user.getUserInfoQuery;
     getUserInfoQuery.values = [id];
     const result = await conn.query(getUserInfoQuery.text, getUserInfoQuery.values);
     const user = result && result.rows && result.rows[0];

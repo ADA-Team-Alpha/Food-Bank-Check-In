@@ -5,8 +5,11 @@ import Row from "react-bootstrap/Row";
 import Form from "react-bootstrap/Form";
 import "./Dashboard.css";
 
-//this component is for the dashboard view that is seen by the volunteers
+// The ManualOrder component is viewed by staff members on the dashboard.
+// Based on conditional rendering, it will be displayed in the second column
+// on the dashboard.  This is how a staff member will manually check-in a client.
 class ManualOrder extends Component {
+  // Setting state here for when a staff member would need to manually check-in a client.
   state = {
     locationID: "",
     dietaryRestrictions: "",
@@ -27,9 +30,7 @@ class ManualOrder extends Component {
         <Container id="checkInContainer">
           <Row id="clientInfoRow">
             <div id="secondColManualHeader">
-              <h1 id="secondColManualTitle">
-                Manually check in a client.
-              </h1>
+              <h1 id="secondColManualTitle">Manually check in a client.</h1>
               <button
                 id="cancelButton"
                 className="btn btn-large btn-primary"
@@ -39,6 +40,7 @@ class ManualOrder extends Component {
               </button>
             </div>
           </Row>
+          {/* This is the exact same information as what is included in the CheckIn component. */}
           <Form.Row xs={12}>
             <>
               <div id="clientQuestions">
@@ -188,6 +190,9 @@ class ManualOrder extends Component {
                   />
                 </label>
                 <br />
+                {/* On submit of the form, we dispatch to "SUBMIT_ORDER" with a payload of 
+                all the new state set by the staff input.  Then the
+                manual order is complete.  And we can show the client info again.*/}
                 <button
                   id="submitButtonManual"
                   onClick={() => {

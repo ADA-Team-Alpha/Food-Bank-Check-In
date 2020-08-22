@@ -1,11 +1,16 @@
+/**
+ * Check if the user is logged in
+ * @param {*} req for the request
+ * @param {*} res for the response
+ * @param {*} next is sent automatically since this is middleware
+ */
+
 const rejectUnauthenticated = (req, res, next) => {
-  // check if logged in
   if (req.isAuthenticated()) {
-    // They were authenticated! User may do the next thing
-    // Note! They may not be Authorized to do all things
+    // They were authenticated so continue with the request.
     next();
   } else {
-    // failure best handled on the server. do redirect here.
+    // The user isn't authenticated/signed in so block the request.
     res.sendStatus(403);
   }
 };

@@ -1,6 +1,8 @@
 import axios from 'axios';
 import { put, takeEvery } from 'redux-saga/effects';
 
+// Handles wait time and refreshing the complete orders.
+// Will be fired on "ORDER_CHECKOUT" actions.
 function* checkOutOrder(action) {
   const id = action.payload.id;
   const waitTimeMinutes = action.payload.waitTimeMinutes;

@@ -6,13 +6,16 @@ const {
 const encryptLib = require('../modules/encryption');
 const pool = require('../modules/pool');
 const userStrategy = require('../strategies/user.strategy');
+const sqlSelect = require('../sql/sqlSelects');
 
-// Handles Ajax request for user information if user is authenticated
+// Handles Ajax request for user information if user is authenticated/signed in.
 router.get('/', rejectUnauthenticated, (req, res) => {
-  // Send back user object from the session (previously queried from the database)
+  // Send back the user object from the session (previously queried from the database).
   res.send(req.user);
 });
 
+// An admin can get all the information about a client by doing a get request with the account id.
+// As of version one there is no interface for doing this though.
 router.get('/:id', rejectUnauthenticated, async (req, res) => {
   const accessLevel = req.user.access_level;
   // If the current user doesn't have a high enough access level return unauthorized.
@@ -24,10 +27,7 @@ router.get('/:id', rejectUnauthenticated, async (req, res) => {
   const conn = await pool.connect();
   try {
     const query = {};
-    query.text = `SELECT account.id, account."name", account.email, account.access_level, account.active,
-                  profile.household_id, profile.latest_order FROM account
-                  LEFT JOIN profile ON account.id = profile.account_id
-                  WHERE account.id = $1;`;
+    query.text = sqlSelect.user.getUserInfoQuery;
     query.values = [id];
     await conn.query('BEGIN');
     const result = await conn.query(query.text, query.values);
@@ -45,27 +45,8 @@ router.get('/:id', rejectUnauthenticated, async (req, res) => {
   }
 });
 
-// // Return an array with the ids of all members from the input household id.
-// router.get('/household-members/:id', rejectUnauthenticated, async (req, res) => {
-//   const householdID = req.params.id;
-//   const conn = await pool.connect();
-//   try {
-//     const query = {};
-//     query.text = `SELECT account."name", account.email FROM profile JOIN account
-//       ON "profile".account_id = account.id WHERE household_id = $1;`;
-//     query.values = [householdID];
-//     const result = await conn.query(query.text, query.values);
-//     conn.release();
-//     res.status(200).send(result.rows);
-//   } catch (error) {
-//     console.log(`Error GET /api/order/household-id/${householdID}`, error);
-//     res.sendStatus(500);
-//   }
-// });
-
-// Handles POST request with new user data
-// The only thing different from this and every other post we've seen
-// is that the password gets encrypted before being inserted
+// Handles POST request when a new user signs up.
+// As of version one anyone can sign up just by registering.
 router.post('/', async (req, res) => {
   const name = req.body.name;
   const email = req.body.email;

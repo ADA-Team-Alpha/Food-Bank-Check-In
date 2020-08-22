@@ -31,16 +31,17 @@
   text-align: center;
 }
 
-#loginButton {
+#registerButton {
   color: white;
   font-size: 15px;
   background-color: #b13324;
   border: 1px solid #b13324;
-  border-radius: 2px;
+  border-radius: 50px;
+  width: 65%;
   transition: 200ms;
   font-family: 'Signika', sans-serif;
   margin-top: 10px;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
 }
 
 #loginButton:hover {

@@ -2,6 +2,7 @@ import axios from 'axios';
 import { put, takeLatest } from 'redux-saga/effects';
 
 // This will get info about the current user and the parking locations.
+// Will be fired on "FETCH_INFO" actions.
 function* fetchInfo() {
   try {
     yield put({ type: 'SET_SERVER_LOADING' });
@@ -31,21 +32,8 @@ function* fetchInfo() {
   }
 }
 
-// function* getHouseholdMembers(action) {
-//   try {
-//     const householdMembers = yield axios.get(`/api/account/household-members/${action.payload}`);
-//     console.log('response', householdMembers);
-//     if (householdMembers.data[0]) {
-
-//     }
-//   } catch (error) {
-//     console.log(`GET members for household with id ${action.payload} failed`, error);
-//   }
-// }
-
 function* accountSaga() {
   yield takeLatest('FETCH_INFO', fetchInfo);
-  // yield takeLatest('GET_HOUSEHOLD_MEMBERS', getHouseholdMembers);
 }
 
 export default accountSaga;

@@ -1,6 +1,8 @@
 import axios from 'axios';
 import { put, takeLatest } from 'redux-saga/effects';
 
+// This saga gets all of the complete orders for that day
+// to display on the dashboard. Will be fired on "FETCH_COMPLETE_ORDERS" actions
 function* fetchCompleteOrders() {
   try {
     const response = yield axios.get('/api/order/complete/today');

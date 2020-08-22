@@ -4,10 +4,13 @@ import { Link } from "react-router-dom";
 import Card from "react-bootstrap/Card";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
-// import Col from "react-bootstrap/Col";
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import Toast from "react-bootstrap/Toast";
 import "./LoginPage.css";
+
+// The LoginPage component is a simple login page that contains two imputs
+// that take in a user's email and password.  They have the option to click
+// "Register" to create an account.  This LoginPage is on the /login route.
 
 class LoginPage extends Component {
   state = {
@@ -18,6 +21,8 @@ class LoginPage extends Component {
 
   handleClose = () => this.setState({ show: false });
 
+  // login function --> dispatches with a payload of the user email and 
+  // password to log that user in and grab the information from that account
   login = (event) => {
     event.preventDefault();
 
@@ -32,8 +37,10 @@ class LoginPage extends Component {
     } else {
       this.props.dispatch({ type: "LOGIN_INPUT_ERROR" });
     }
-  }; // end login
+  };
+  // end login
 
+  // Setting state based on the user input so we can dispatch that info
   handleInputChangeFor = (propertyName) => (event) => {
     this.setState({
       [propertyName]: event.target.value,
@@ -45,7 +52,6 @@ class LoginPage extends Component {
       <div id="loginBody">
         <Container id="loginContainer">
           <Row id="loginRow">
-            {/* <Col lg={true}> */}
               <Card id="loginCard">
                 <form onSubmit={this.login}>
                   <div id="welcomeDiv">
@@ -94,6 +100,7 @@ class LoginPage extends Component {
               </Link>
             </center>
           </Row>
+          {/* If there were to be an error, this is where it would display. */}
           <Row>
             <div id="errorDiv">
               {this.props.errors.loginMessage && (
@@ -109,6 +116,7 @@ class LoginPage extends Component {
   }
 }
 
+// Bringing in the errorReducers to handle errors like incorrect login information
 const mapStateToProps = (state) => ({
   errors: state.errors,
 });

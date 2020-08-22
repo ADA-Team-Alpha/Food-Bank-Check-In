@@ -6,7 +6,12 @@ import Form from "react-bootstrap/Form";
 import moment from 'moment';
 import "./CheckIn.css";
 
+// The CheckIn component is for clients (access level 1)
+// In this component conditional rendering is used to show three different views
+
 class CheckIn extends React.Component {
+  // Setting state here to capture all of the information we gather from the client
+  // to submit the order and complete the check-in
   state = {
     locationID: "",
     dietaryRestrictions: "",
@@ -31,6 +36,8 @@ class CheckIn extends React.Component {
               <h1 id="checkInTitle">Client Check-In</h1>
             </div>
           </Row>
+          {/* This row is shown on all three views.  This row displays the logged in user's name,
+          household ID, and the date in which they last picked up food. */}
           <Row id="clientInfoRow">
             <div id="clientInfo">
               <h1 id="accountName">Hi {this.props.account.name}!</h1>
@@ -52,6 +59,9 @@ class CheckIn extends React.Component {
           <div>
             <div id="greyLine"></div>
           </div>
+          {/* This row is the first view for the client.  There is an input for the
+          client to select their parking spot and begin checking in. When they click
+          check-in they will be brought to the next view, thanks to conditional rendering. */}
           <Row id="checkinBody">
               {this.state.showCheckIn && (
                 <div id="clientInput">
@@ -72,6 +82,9 @@ class CheckIn extends React.Component {
                       }
                     >
                       <>
+                      {/* For the dropdown, we are mapping through parkingLocations which
+                      is brought in by global state, so we can display all of the
+                      different parking locations that are in the database as options for the user. */}
                         <option value=""></option>
                         {this.props.parkingLocations.map((location, index) => (
                           <option
@@ -101,6 +114,9 @@ class CheckIn extends React.Component {
                 </div>
               )}
           </Row>
+          {/* This row is the second view for the client, after they have selected their parking spot.  
+          This view is a simple form for the client to fill out.  This is where state is set to the user's
+          input, and then on sumbit, we dispatch to dubmit the order. */}
           <Form.Row xs={12}>
             {this.state.showQuestions && (
               <>
@@ -275,6 +291,10 @@ class CheckIn extends React.Component {
               </>
             )}
           </Form.Row>
+          {/* This last view will be shown after the user fills out the form and clicks "Submit."
+          This is just a final thank you/success page.  They will see "Processing..." which indicates
+          the staff received their order and they will confirm a wait time.  When the staff confirms
+          a wait time, it will populate in place of "Processing..." for the user to see. */}
           {this.state.showSuccess && (
             <div id="thankYou">
               {this.props.errors.orderMessage ? (
@@ -318,6 +338,9 @@ class CheckIn extends React.Component {
   }
 }
 
+// Bringing in account to display information at the top, parkingLocations
+// for the dropdown, errorReducer for error handling, and waitTime to display
+// the time the staff submits.
 const mapStateToProps = (state) => ({
   account: state.account,
   parkingLocations: state.parkingLocations,

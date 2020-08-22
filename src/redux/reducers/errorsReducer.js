@@ -32,6 +32,9 @@ const registrationMessage = (state = "", action) => {
   }
 };
 
+// orderMessage holds the string that will display 
+// at the end of a client check-in if there's an error
+// checking them in
 const orderMessage = (state = "", action) => {
   switch (action.type) {
     case "SET_ORDER_PLACEMENT_ERROR":
@@ -45,9 +48,9 @@ const orderMessage = (state = "", action) => {
   }
 };
 
-// make one object that has keys loginMessage, registrationMessage
+// make one object that has keys loginMessage, registrationMessage and orderMessage
 // these will be on the redux state at:
-// state.errors.loginMessage and state.errors.registrationMessage
+// state.errors.loginMessage, state.errors.registrationMessage and state.errors.orderMessage
 export default combineReducers({
   loginMessage,
   registrationMessage,

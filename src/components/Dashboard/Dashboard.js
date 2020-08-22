@@ -10,8 +10,12 @@ import ManualOrder from "./ManualOrder";
 import HomeIcon from "@material-ui/icons/Home";
 import "./Dashboard.css";
 
-//this component is for the dashboard view that is seen by the volunteers
+// The Dashboard component is for the dashboard view that is seen by the staff/volunteers
+
 class Dashboard extends Component {
+  // Setting state here for the waitTime for the client 
+  // showClientInfo is used for conditional rendering --> whether the client information is to be
+  // shown, or the manual check-in form
   state = {
     orderObj: {
       id: '',
@@ -24,7 +28,8 @@ class Dashboard extends Component {
       other: ' ',
       pickup_name: '',
       checkout_at: ' ',
-      wait_time_minutes: '15'
+      wait_time_minutes: '15',
+      location_id: '',
     },
     waitTimeMinutes: '15',
     showClientInfo: true,
@@ -65,6 +70,7 @@ class Dashboard extends Component {
     return (
       <>
         <Container fluid id="dashContainer">
+          {/* Dashboard title row */}
           <Row>
             <div id="orangeDiv">
               <HomeIcon
@@ -76,6 +82,8 @@ class Dashboard extends Component {
             </div>
           </Row>
           <Row id="dashRow">
+            {/* This first column displays a list of all clients that are currently checked in. 
+            A staff member also has the ability to click "Add Client." */}
             <Col id="firstCol" xs={12} sm={12} md={12} lg={4} xl={4}>
               <Card id="firstCard">
                 <form className="dashForm">
@@ -113,6 +121,9 @@ class Dashboard extends Component {
                 </form>
               </Card>
             </Col>
+            {/* This second column displays information about the client that is clicked on
+            from the first column. This is also where a staff member would select the wait time
+            for the client. */}
             <Col id="secondCol" xs={12} sm={12} md={12} lg={4} xl={4}>
               <Card id="secondCard">
                 {this.state.showClientInfo ? (
@@ -165,9 +176,14 @@ class Dashboard extends Component {
                               {this.state.orderObj.pickup_name}
                             </h3>
                           )}
-                          <h3 id="infoName">Name: {this.state.orderObj.name}</h3>
+                          <h3 id="infoName">
+                            Name: {this.state.orderObj.name}
+                          </h3>
                           <h4 id="infoId">
                             Household ID: {this.state.orderObj.household_id}
+                          </h4>
+                          <h4 id="infoId">
+                            Parking Spot: {this.state.orderObj.location_id}
                           </h4>
                           <br />
                           <p className="clientInformation">
@@ -239,8 +255,9 @@ class Dashboard extends Component {
                             )}
                           </select>
                         </label>
-                      </>
+                      </> // Conditional rendering here --> If there is no name selected from the first column,
                     ) : (
+                      // then just show this helper text.
                       <h1 id="selectText">
                         Select a name from the Client Queue to view order
                         details.
@@ -248,12 +265,15 @@ class Dashboard extends Component {
                     )}
                   </form>
                 ) : (
+                  // If the staff member clicks "Add Client," show the manual order form
                   <ManualOrder
                     toggleShowClientInfo={this.toggleShowClientInfo}
                   />
                 )}
               </Card>
             </Col>
+            {/* This last column displays a list of everyone that has received food/been checked in by
+            staff for that day only. */}
             <Col id="thirdCol" xs={12} sm={12} md={12} lg={4} xl={4}>
               <Card id="thirdCard">
                 <form className="dashForm">
@@ -292,6 +312,8 @@ class Dashboard extends Component {
   }
 }
 
+// Bringing in activeOrders to display in the first column,
+// and completeOrders to display in the thrid column
 const mapStateToProps = (state) => ({
   activeOrders: state.activeOrders,
   completeOrders: state.completeOrders,

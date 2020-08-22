@@ -1,16 +1,16 @@
 import React from "react";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
-import Typography from "@material-ui/core/Typography";
 import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
 import "./Header.css";
+
+// The Header component is a simple header --> it contains the logo and the logout button.
 
 const Header = (props) => (
   <AppBar position="static" id="navBar" xs={12}>
     <Toolbar>
       <img src="EFP_Logo_Color.png" alt="Emergency Food Pantry" id="headerLogo"/>
-      <Typography id="navTitle">Emergency Food Pantry</Typography>
         <button
           id="logoutButton"
           onClick={() => {

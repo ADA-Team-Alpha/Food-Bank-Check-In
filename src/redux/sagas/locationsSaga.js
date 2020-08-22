@@ -1,6 +1,8 @@
 import axios from 'axios';
 import { put, takeLatest } from 'redux-saga/effects';
 
+// This grabs the complete orders so we can set the parking location
+// that the user selected.
 function* fetchCompleteOrders() {
   try {
     const response = yield axios.get('/api/location');
