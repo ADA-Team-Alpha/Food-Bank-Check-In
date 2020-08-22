@@ -53,7 +53,22 @@ CREATE TABLE "location" (
   OIDS=FALSE
 );
 
-
+INSERT INTO "location" ("id", "description") VALUES (1, 'Spot 1');
+INSERT INTO "location" ("id", "description") VALUES (2, 'Spot 2');
+INSERT INTO "location" ("id", "description") VALUES (3, 'Spot 3');
+INSERT INTO "location" ("id", "description") VALUES (4, 'Spot 4');
+INSERT INTO "location" ("id", "description") VALUES (5, 'Spot 5');
+INSERT INTO "location" ("id", "description") VALUES (6, 'Spot 6');
+INSERT INTO "location" ("id", "description") VALUES (7, 'Spot 7');
+INSERT INTO "location" ("id", "description") VALUES (8, 'Spot 8');
+INSERT INTO "location" ("id", "description") VALUES (9, 'Spot 9');
+INSERT INTO "location" ("id", "description") VALUES (10, 'Spot 10');
+INSERT INTO "location" ("id", "description") VALUES (11, 'Spot 11');
+INSERT INTO "location" ("id", "description") VALUES (12, 'Spot 12');
+INSERT INTO "location" ("id", "description") VALUES (13, 'Spot 13');
+INSERT INTO "location" ("id", "description") VALUES (14, 'Spot 14');
+INSERT INTO "location" ("id", "description") VALUES (15, 'I''m parked on the street');
+INSERT INTO "location" ("id", "description") VALUES (16, 'I walked here today');
 
 
 

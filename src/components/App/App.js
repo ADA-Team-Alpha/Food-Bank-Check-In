@@ -17,7 +17,7 @@ import CheckIn from '../CheckIn/CheckIn';
 // The App file contains the two main components, Dashboard and CheckIn
 // as well as the register/login routes
 
-// On componendDidMount, 'FETCH_INFO' is dispatched to grab information about the account that is logged in.
+// On componentDidMount, 'FETCH_INFO' is dispatched to grab information about the account that is logged in.
 class App extends Component {
   componentDidMount() {
     this.props.dispatch({ type: 'FETCH_INFO' });

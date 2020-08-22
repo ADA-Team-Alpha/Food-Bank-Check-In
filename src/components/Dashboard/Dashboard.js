@@ -29,7 +29,8 @@ class Dashboard extends Component {
       other: ' ',
       pickup_name: '',
       checkout_at: ' ',
-      wait_time_minutes: '15'
+      wait_time_minutes: '15',
+      location_id: '',
     },
     waitTimeMinutes: '15',
     showClientInfo: true,
@@ -177,9 +178,14 @@ class Dashboard extends Component {
                               {this.state.orderObj.pickup_name}
                             </h3>
                           )}
-                          <h3 id="infoName">Name: {this.state.orderObj.name}</h3>
+                          <h3 id="infoName">
+                            Name: {this.state.orderObj.name}
+                          </h3>
                           <h4 id="infoId">
                             Household ID: {this.state.orderObj.household_id}
+                          </h4>
+                          <h4 id="infoId">
+                            Parking Spot: {this.state.orderObj.location_id}
                           </h4>
                           <br />
                           <p className="clientInformation">
@@ -252,16 +258,16 @@ class Dashboard extends Component {
                           </select>
                         </label>
                       </> // Conditional rendering here --> If there is no name selected from the first column,
-                          // then just show this helper text.
                     ) : (
+                      // then just show this helper text.
                       <h1 id="selectText">
                         Select a name from the Client Queue to view order
                         details.
                       </h1>
                     )}
                   </form>
-                        // If the staff member clicks "Add Client," show the manual order form
                 ) : (
+                  // If the staff member clicks "Add Client," show the manual order form
                   <ManualOrder
                     toggleShowClientInfo={this.toggleShowClientInfo}
                   />

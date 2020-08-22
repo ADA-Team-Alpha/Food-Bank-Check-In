@@ -117,7 +117,7 @@ class RegisterPage extends Component {
                     type="submit"
                     name="submit"
                     value="Register"
-                    id="loginButton"
+                    id="registerButton"
                   />
                 </div>
                 {/* If there were to be an error, this is where it is displayed. */}

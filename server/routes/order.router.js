@@ -1,11 +1,14 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
 const {
-  rejectUnauthenticated
-} = require('../modules/authentication-middleware');
-const pool = require('../modules/pool');
+  rejectUnauthenticated,
+} = require("../modules/authentication-middleware");
+const pool = require("../modules/pool");
 
-router.get('/', rejectUnauthenticated, async (req, res) => {
+/*
+	GET /api/order/ requests ALL orders in the database
+*/
+router.get("/", rejectUnauthenticated, async (req, res) => {
   const accessLevel = req.user.access_level;
   // If the current user doesn't have a high enough access level return unauthorized.
   if (accessLevel < 10) {
@@ -21,12 +24,15 @@ router.get('/', rejectUnauthenticated, async (req, res) => {
     conn.release();
     res.status(200).send(result.rows);
   } catch (error) {
-    console.log('Error GET /api/order', error);
+    console.log("Error GET /api/order", error);
     res.sendStatus(500);
   }
 });
 
-router.get('/active', rejectUnauthenticated, async (req, res) => {
+/*
+	GET /api/order/active requests all active orders in the database (not checked out)
+*/
+router.get("/active", rejectUnauthenticated, async (req, res) => {
   const accessLevel = req.user.access_level;
   // If the current user doesn't have a high enough access level return unauthorized.
   if (accessLevel < 10) {
@@ -45,12 +51,15 @@ router.get('/active', rejectUnauthenticated, async (req, res) => {
     conn.release();
     res.status(200).send(result.rows);
   } catch (error) {
-    console.log('Error GET /api/order/active', error);
+    console.log("Error GET /api/order/active", error);
     res.sendStatus(500);
   }
 });
 
-router.get('/complete/today', rejectUnauthenticated, async (req, res) => {
+/*
+	GET /api/order/complete/today requests orders that have been checked out on the current date
+*/
+router.get("/complete/today", rejectUnauthenticated, async (req, res) => {
   const accessLevel = req.user.access_level;
   // If the current user doesn't have a high enough access level return unauthorized.
   if (accessLevel < 10) {
@@ -69,12 +78,15 @@ router.get('/complete/today', rejectUnauthenticated, async (req, res) => {
     conn.release();
     res.status(200).send(result.rows);
   } catch (error) {
-    console.log('Error GET /api/order/active', error);
+    console.log("Error GET /api/order/active", error);
     res.sendStatus(500);
   }
 });
 
-router.get('/client-order-status', async (req, res) => {
+/*
+	GET /api/order/client-order-status requests the status of an order to see when it has been confirmed by staff
+*/
+router.get("/client-order-status", async (req, res) => {
   const id = req.user.id;
   const conn = await pool.connect();
   try {
@@ -88,12 +100,15 @@ router.get('/client-order-status', async (req, res) => {
     conn.release();
     res.status(200).send(result.rows);
   } catch (error) {
-    console.log('Error GET /api/order/active', error);
+    console.log("Error GET /api/order/active", error);
     res.sendStatus(500);
   }
 });
 
-router.post('/', rejectUnauthenticated, async (req, res) => {
+/*
+	POST /api/order/ adds a new order to the database.
+*/
+router.post("/", rejectUnauthenticated, async (req, res) => {
   const accountID = req.user.id;
   const accessLevel = req.user.access_level;
 
@@ -118,14 +133,15 @@ router.post('/', rejectUnauthenticated, async (req, res) => {
   }
 
   // TODO only allow volunteers to specify the wait time.
-  if (!locationID ||
-    typeof dietaryRestrictions !== 'string' ||
-    typeof walkingHome !== 'boolean' ||
-    typeof pregnant !== 'boolean' ||
-    typeof childBirthday !== 'boolean' ||
-    typeof snap !== 'boolean' ||
-    typeof pickupName !== 'string' ||
-    typeof other !== 'string'
+  if (
+    !locationID ||
+    typeof dietaryRestrictions !== "string" ||
+    typeof walkingHome !== "boolean" ||
+    typeof pregnant !== "boolean" ||
+    typeof childBirthday !== "boolean" ||
+    typeof snap !== "boolean" ||
+    typeof pickupName !== "string" ||
+    typeof other !== "string"
   ) {
     res.sendStatus(400);
     return;
@@ -158,21 +174,24 @@ router.post('/', rejectUnauthenticated, async (req, res) => {
       snap,
       pickupName,
       other,
-      waitTimeMinutes
+      waitTimeMinutes,
     ];
-    await conn.query('BEGIN');
+    await conn.query("BEGIN");
     const result = await conn.query(query.text, query.values);
-    await conn.query('COMMIT');
+    await conn.query("COMMIT");
     conn.release();
     res.status(201).send(result.rows[0]);
   } catch (error) {
-    await conn.query('ROLLBACK');
-    console.log('Error POST /api/order', error);
+    await conn.query("ROLLBACK");
+    console.log("Error POST /api/order", error);
     res.sendStatus(500);
   }
 });
 
-router.put('/checkout/:id', async (req, res) => {
+/*
+	PUT /api/order/checkout/:id marks an order as checked out and adds a wait time attribute to the order
+*/
+router.put("/checkout/:id", async (req, res) => {
   const accessLevel = req.user.access_level;
   // If the current user doesn't have a high enough access level return unauthorized.
   if (accessLevel < 10) {
@@ -195,26 +214,38 @@ router.put('/checkout/:id', async (req, res) => {
       WHERE id = $1
       RETURNING *;`;
     placeOrderQuery.values = [req.params.id, waitTimeMinutes];
-    await conn.query('BEGIN');
-    const result = await conn.query(placeOrderQuery.text, placeOrderQuery.values);
+    await conn.query("BEGIN");
+    const result = await conn.query(
+      placeOrderQuery.text,
+      placeOrderQuery.values
+    );
     // do a second query that updates the user's profile to include the latest order
     const updateProfileLatestOrderQuery = {};
     updateProfileLatestOrderQuery.text = `UPDATE "profile"
       SET latest_order = $1
       WHERE account_id = $2;`;
-    updateProfileLatestOrderQuery.values = [result.rows[0].id, result.rows[0].account_id];
-    await conn.query(updateProfileLatestOrderQuery.text, updateProfileLatestOrderQuery.values);
-    await conn.query('COMMIT');
+    updateProfileLatestOrderQuery.values = [
+      result.rows[0].id,
+      result.rows[0].account_id,
+    ];
+    await conn.query(
+      updateProfileLatestOrderQuery.text,
+      updateProfileLatestOrderQuery.values
+    );
+    await conn.query("COMMIT");
     conn.release();
     res.status(200).send(result.rows);
   } catch (error) {
-    conn.query('ROLLBACK');
-    console.log('Error PUT /api/order/checkout/id', error);
+    conn.query("ROLLBACK");
+    console.log("Error PUT /api/order/checkout/id", error);
     res.sendStatus(500);
   }
 });
 
-router.delete('/:id', rejectUnauthenticated, async (req, res) => {
+/*
+	DELETE /api/order/:id deletes an order from the database. Admin only
+*/
+router.delete("/:id", rejectUnauthenticated, async (req, res) => {
   const accessLevel = req.user.access_level;
   // If the current user doesn't have a high enough access level return unauthorized.
   if (accessLevel < 100) {
@@ -230,7 +261,7 @@ router.delete('/:id', rejectUnauthenticated, async (req, res) => {
     conn.release();
     res.sendStatus(204);
   } catch (error) {
-    console.log('Error PUT /api/order/checkout/id', error);
+    console.log("Error PUT /api/order/checkout/id", error);
     res.sendStatus(500);
   }
 });
