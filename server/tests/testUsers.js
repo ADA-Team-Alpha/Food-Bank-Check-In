@@ -3,6 +3,7 @@ require('dotenv').config();
 module.exports = {
   testUser: {
     testUserID: 2,
+    testUserHouseholdID: '1',
     testUserName: 'test_order',
     testUserEmail: 'test_order@email.com',
     testUserPassword: 'test_order_password'

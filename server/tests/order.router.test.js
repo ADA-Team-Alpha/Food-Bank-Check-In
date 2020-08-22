@@ -8,6 +8,7 @@ const locationID = 1;
 const testUser = request.agent(app);
 const testUserInfo = users.testUser;
 const testUserID = testUserInfo.testUserID;
+const testUserHouseholdID = testUserInfo.testUserHouseholdID;
 const testUserName = testUserInfo.testUserName;
 const testUserEmail = testUserInfo.testUserEmail;
 const testUserPassword = testUserInfo.testUserPassword;
@@ -53,7 +54,7 @@ describe('Normal client with access level 1 for /api/order', () => {
         name: testUserName,
         email: testUserEmail,
         access_level: 1,
-        household_id: '2',
+        household_id: testUserHouseholdID,
         latest_order: null,
         active: true,
         approved: true
