@@ -30,7 +30,6 @@ router.get('/:id', rejectUnauthenticated, async (req, res) => {
     query.text = sqlSelect.user.getUserInfoQuery;
     query.values = [id];
     const result = await conn.query(query.text, query.values);
-    conn.release();
     if (result.rows[0]) {
       res.status(200).send(result.rows[0]);
     } else {
@@ -39,6 +38,8 @@ router.get('/:id', rejectUnauthenticated, async (req, res) => {
   } catch (error) {
     console.log(`Error GET /api/account/${id}`, error);
     res.sendStatus(500);
+  } finally {
+    conn.release();
   }
 });
 
@@ -53,11 +54,12 @@ router.get('/pending/approval', rejectUnauthenticated, async (req, res) => {
   try {
     const result = await conn.query(`SELECT id, "name", email, active, approved
                                      FROM account WHERE approved = FALSE AND active = TRUE;`);
-    conn.release();
     res.status(200).send(result.rows);
   } catch (error) {
     console.log('Error GET /api/account/pending-approval', error);
     res.sendStatus(500);
+  } finally {
+    conn.release();
   }
 });
 
@@ -87,12 +89,13 @@ router.post('/', async (req, res) => {
     accountQuery.values = [result.rows[0].id, houseId];
     await conn.query(accountQuery.text, accountQuery.values);
     await conn.query('COMMIT');
-    conn.release();
     res.status(200).send(result.rows[0]);
   } catch (error) {
     conn.query('ROLLBACK');
     console.log('Error POST /account', error);
     res.sendStatus(500);
+  } finally {
+    conn.release();
   }
 });
 
@@ -131,12 +134,13 @@ router.put('/:id', rejectUnauthenticated, async (req, res) => {
     await conn.query('BEGIN');
     const result = await conn.query(query.text, query.values);
     await conn.query('COMMIT');
-    conn.release();
     res.status(200).send(result.rows && result.rows[0]);
   } catch (error) {
     conn.query('ROLLBACK');
     console.log('Error PUT /account', error);
     res.sendStatus(500);
+  } finally {
+    conn.release();
   }
 });
 
@@ -168,12 +172,13 @@ router.put('/update-approved/:id', rejectUnauthenticated, async (req, res) => {
     await conn.query('BEGIN');
     const result = await conn.query(query.text, query.values);
     await conn.query('COMMIT');
-    conn.release();
     res.status(200).send(result.rows && result.rows[0]);
   } catch (error) {
     conn.query('ROLLBACK');
     console.log('Error PUT /account', error);
     res.sendStatus(500);
+  } finally {
+    conn.release();
   }
 });
 
@@ -193,12 +198,13 @@ router.delete('/:id', rejectUnauthenticated, async (req, res) => {
     await conn.query('BEGIN');
     await conn.query(query.text, query.values);
     await conn.query('COMMIT');
-    conn.release();
     res.sendStatus(204);
   } catch (error) {
     conn.query('ROLLBACK');
     console.log('Error DELETE /account', error);
     res.sendStatus(500);
+  } finally {
+    conn.release();
   }
 });
 
