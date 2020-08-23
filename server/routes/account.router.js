@@ -52,8 +52,9 @@ router.get('/pending/approval', rejectUnauthenticated, async (req, res) => {
   }
   const conn = await pool.connect();
   try {
-    const result = await conn.query(`SELECT id, "name", email, active, approved
-                                     FROM account WHERE approved = FALSE AND active = TRUE;`);
+    const result = await conn.query(`SELECT account.id, account."name", account.email, profile.household_id
+                                     FROM account LEFT JOIN profile ON account.id = profile.account_id
+                                     WHERE account.approved = FALSE AND account.active = TRUE;`);
     res.status(200).send(result.rows);
   } catch (error) {
     console.log('Error GET /api/account/pending-approval', error);
