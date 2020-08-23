@@ -82,7 +82,11 @@ class Dashboard extends Component {
                       id="addClient"
                       className="btn btn-large btn-primary"
                       type="submit"
-                      onClick={() => this.setState({ showClientInfo: false })}
+                      onClick={event => {
+                        event.preventDefault();
+                        this.setState({ showClientInfo: false }
+                        )
+                      }}
                     >
                       Add Client
                     </button>
@@ -272,7 +276,8 @@ class Dashboard extends Component {
                   <Table responsive hover>
                     <tbody>
                       {this.props.completeOrders?.map((complete, index) => (
-                        <tr id="checkedInRow"
+                        <tr
+                          id="checkedInRow"
                           key={`complete-orders-${index}`}
                         >
                           <td
