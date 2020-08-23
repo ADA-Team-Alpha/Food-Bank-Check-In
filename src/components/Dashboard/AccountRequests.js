@@ -1,13 +1,15 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import Container from "react-bootstrap/Container";
-import Form from "react-bootstrap/Form";
-import Card from "react-bootstrap/Card";
-import Col from "react-bootstrap/Col";
-import Table from "react-bootstrap/Table";
+import MUIDataTable from 'mui-datatables';
+import TablePresets from '../Table/TableDefaults';
+import { MuiThemeProvider, createMuiTheme } from '@material-ui/core';
 import "./Dashboard.css";
 
-class UpdateAccountPendingStatus extends Component {
+const useStyles = createMuiTheme(
+  TablePresets.theme
+);
+
+class PendingAccounts extends Component {
   state = {
     pendingInterval: null
   }
@@ -27,33 +29,15 @@ class UpdateAccountPendingStatus extends Component {
   };
 
   render() {
+    const data = this.props.pendingAccounts.map(accountObj =>
+      [accountObj.name, accountObj.email, accountObj.household_id]
+    );
+    console.log(data);
     return (
       <>
-        <Container>
-          <Form.Row xs={12}>
-            <Col xs={12} sm={12} md={12} lg={4} xl={4}>
-              <Card>
-                <form className="dashForm">
-                  <h1 id="thirdColTitle">Clients Checked In</h1>
-                  <Table responsive hover>
-                    <tbody>
-                      {this.props.pendingAccounts.map((account, index) => (
-                        <tr
-                          key={`button-to-accept-account-${index}`}
-                          onClick={() => this.props.dispatch({ type: 'UPDATE_PENDING_ACCOUNT', payload: { id: account.id, approved: true }})}
-                        >
-                          <td>
-                            {JSON.stringify(account)}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </Table>
-                </form>
-              </Card>
-            </Col>
-          </Form.Row>
-        </Container>
+        <MuiThemeProvider theme={useStyles}>
+          <MUIDataTable title='Search Page' data={data} columns={TablePresets.columns} options={TablePresets.options} />
+        </MuiThemeProvider>
       </>
     );
   }
@@ -63,4 +47,4 @@ const mapStateToProps = (state) => ({
   pendingAccounts: state.pendingAccounts
 });
 
-export default connect(mapStateToProps)(UpdateAccountPendingStatus);
+export default connect(mapStateToProps)(PendingAccounts);
