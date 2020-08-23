@@ -5,6 +5,7 @@ import Row from "react-bootstrap/Row";
 import Orders from "./Orders";
 import AccountRequests from "./AccountRequests";
 import HomeIcon from "@material-ui/icons/Home";
+import Sound from 'react-sound';
 import "./Dashboard.css";
 
 // The Dashboard component is for the dashboard view that is seen by the staff/volunteers.
@@ -19,8 +20,12 @@ class Dashboard extends Component {
   }
 
   render() {
+    // this.props.newOrder && this.playSound();
     return (
       <>
+      <Sound
+          url='/Sounds/new_order.wav'
+      />
         <Container fluid id="dashContainer">
           {/* Dashboard title row */}
           <Row>
@@ -49,4 +54,8 @@ class Dashboard extends Component {
   }
 }
 
-export default connect()(Dashboard);
+const mapStateToProps = (state) => ({
+  newOrder: state.newOrder
+});
+
+export default connect(mapStateToProps)(Dashboard);
