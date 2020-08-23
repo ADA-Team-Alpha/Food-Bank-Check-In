@@ -1,4 +1,4 @@
-const setWaitTimeReducer = (state = [{ id: 1 }, 3], action) => {
+const setWaitTimeReducer = (state = [], action) => {
   switch (action.type) {
     case "SET_PENDING_ACCOUNTS":
       return action.payload;
