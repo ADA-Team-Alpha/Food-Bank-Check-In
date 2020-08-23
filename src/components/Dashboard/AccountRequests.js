@@ -33,52 +33,51 @@ class PendingAccounts extends Component {
     const data = this.props.pendingAccounts.map(accountObj =>
       [accountObj.name, accountObj.email, accountObj.household_id]
     );
-    const columns = TablePresets.columns;
+    const columns = [...TablePresets.columns];
+    const options = { ...TablePresets.options, download: false };
     // If there's the default quantity of three columns add another one for updating accounts
     // because every time the pages updates it will try to add another column.
-    if (columns.length === 3) {
-      columns.push(
-        {
-          name: 'Update',
-          options: {
-            filter: true,
-            sort: false,
-            empty: true,
-            customBodyRenderLite: (dataIndex) => {
-              return (
-                <>
-                  <button
-                    className={'acceptButton'}
-                    onClick={() => {
-                      this.props.dispatch({
-                        type: 'UPDATE_PENDING_ACCOUNT',
-                        payload: { id: this.props.pendingAccounts[dataIndex].id, approved: true }
-                      })
-                    }}>
-                    Accept
+    columns.push(
+      {
+        name: 'Update',
+        options: {
+          filter: true,
+          sort: false,
+          empty: true,
+          customBodyRenderLite: (dataIndex) => {
+            return (
+              <>
+                <button
+                  className={'acceptButton'}
+                  onClick={() => {
+                    this.props.dispatch({
+                      type: 'UPDATE_PENDING_ACCOUNT',
+                      payload: { id: this.props.pendingAccounts[dataIndex].id, approved: true }
+                    })
+                  }}>
+                  Accept
                 </button>
-                  <button
-                    className={'declineButton'}
-                    onClick={() => {
-                      this.props.dispatch({
-                        type: 'UPDATE_PENDING_ACCOUNT',
-                        payload: { id: this.props.pendingAccounts[dataIndex].id, approved: false }
-                      })
-                    }}>
-                    Decline
+                <button
+                  className={'declineButton'}
+                  onClick={() => {
+                    this.props.dispatch({
+                      type: 'UPDATE_PENDING_ACCOUNT',
+                      payload: { id: this.props.pendingAccounts[dataIndex].id, approved: false }
+                    })
+                  }}>
+                  Decline
                 </button>
-                </>
-              );
-            }
+              </>
+            );
           }
         }
-      )
-    }
+      }
+    )
     return (
       <>
         <h5>If any of this information needs to be modified please speak with an administrator.</h5>
         <MuiThemeProvider theme={useStyles}>
-          <MUIDataTable title='Pending Accounts' data={data} columns={TablePresets.columns} options={TablePresets.options} />
+          <MUIDataTable title='Pending Accounts' data={data} columns={columns} options={options} />
         </MuiThemeProvider>
       </>
     );
