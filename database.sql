@@ -7,6 +7,7 @@ CREATE TABLE "account" (
 	"password" varchar(320) NOT NULL,
 	"access_level" integer NOT NULL DEFAULT '1',
 	"active" BOOLEAN NOT NULL DEFAULT 'true',
+	"approved" BOOLEAN NOT NULL DEFAULT 'false',
 	CONSTRAINT "account_pk" PRIMARY KEY ("id")
 ) WITH (
   OIDS=FALSE

@@ -11,14 +11,25 @@ const newUserHouseholdID = '1';
 const newUserPassword = 'test';
 let newUserId = 0;
 
+const id = 'id';
+const name = 'name';
+const email = 'email';
+const password = 'password';
+const accessLevel = 'access_level';
+const householdID = 'household_id';
+const latestOrder = 'latest_order';
+const active = 'active';
+const approved = 'approved';
+
 const stdNewUserResp = {
-  id: expect.any(Number),
-  name: newUserName,
-  email: newUserEmail,
-  access_level: 1,
-  household_id: newUserHouseholdID,
-  latest_order: null,
-  active: true
+  [id]: expect.any(Number),
+  [name]: newUserName,
+  [email]: newUserEmail,
+  [accessLevel]: 1,
+  [householdID]: newUserHouseholdID,
+  [latestOrder]: null,
+  [active]: true,
+  [approved]: false
 };
 
 afterAll(async (done) => {
@@ -26,7 +37,7 @@ afterAll(async (done) => {
   // since that's a foreign key so we can delete the order that was just added.
   await pool.query(`UPDATE profile SET account_id = null WHERE account_id = ${newUserId};`);
   // Delete the profiles that have a null account_id for clean up.
-  await pool.query(`DELETE FROM "profile" WHERE account_id is null;`);
+  await pool.query('DELETE FROM "profile" WHERE account_id is null;');
   // Normally we set accounts "active" status to false but delete this test account to save space.
   await pool.query(`DELETE FROM account WHERE id = ${newUserId};`);
   done();
@@ -50,10 +61,28 @@ describe('GET /api/account/1', () => {
   });
 });
 
+describe('GET /api/account/pending-approval', () => {
+  it('Reject get info for users while logged out', async (done) => {
+    await newUser
+      .get('/api/account/pending-approval')
+      .expect(403);
+    done();
+  });
+});
+
 describe('PUT /api/account/1', () => {
   it('Reject account updating while logged out with a bad request', async (done) => {
     await newUser
       .put('/api/account/1')
+      .expect(403);
+    done();
+  });
+});
+
+describe('PUT /api/account/update-approved/1', () => {
+  it('Reject account updating while logged out with a bad request', async (done) => {
+    await newUser
+      .put('/api/account/update-approved/1')
       .expect(403);
     done();
   });
@@ -83,14 +112,14 @@ describe('POST /api/account', () => {
     const res = await newUser
       .post('/api/account')
       .send({
-        name: newUserName,
-        email: newUserEmail,
-        household_id: newUserHouseholdID,
-        password: newUserPassword
+        [name]: newUserName,
+        [email]: newUserEmail,
+        [householdID]: newUserHouseholdID,
+        [password]: newUserPassword
       })
       .expect(200);
     expect(res.body).toEqual({
-      id: expect.any(Number)
+      [id]: expect.any(Number)
     });
     done();
     newUserId = res.body.id;
@@ -113,7 +142,7 @@ describe('POST to login /api/account/login', () => {
       .post('/api/account/login')
       .send({
         username: newUserEmail,
-        password: newUserPassword
+        [password]: newUserPassword
       })
       .expect(200);
     done();
@@ -139,10 +168,29 @@ describe('GET /api/account/1', () => {
   });
 });
 
+describe('GET /api/account/pending-approval', () => {
+  it('Reject get info for users because current user is not an admin', async (done) => {
+    await newUser
+      .get('/api/account/pending-approval')
+      .expect(403);
+    done();
+  });
+});
+
 describe('PUT /api/account/1', () => {
-  it('Reject put info for specific user when sending bad info', async (done) => {
+  it('Reject put info for specific user because current user is not an admin', async (done) => {
     await newUser
       .put('/api/account/1')
+      .send({})
+      .expect(403);
+    done();
+  });
+});
+
+describe('PUT /api/account/update-approved/1', () => {
+  it('Reject put info for specific user because current user is not an admin', async (done) => {
+    await newUser
+      .put('/api/account/update-approved/1')
       .send({})
       .expect(403);
     done();
@@ -169,7 +217,7 @@ describe('POST to login /api/account/login', () => {
       .post('/api/account/login')
       .send({
         username: adminEmail,
-        password: adminPassword
+        [password]: adminPassword
       })
       .expect(200);
     done();
@@ -182,13 +230,14 @@ describe('GET /api/account/', () => {
       .get('/api/account')
       .expect(200);
     expect(res.body).toEqual({
-      id: 1,
-      name: adminInfo.name,
-      email: adminInfo.adminEmail,
-      access_level: adminInfo.accessLevel,
-      household_id: adminInfo.householdID,
-      latest_order: adminInfo.latestOrder,
-      active: adminInfo.active
+      [id]: 1,
+      [name]: adminInfo.name,
+      [email]: adminInfo.adminEmail,
+      [accessLevel]: adminInfo.accessLevel,
+      [householdID]: adminInfo.householdID,
+      [latestOrder]: adminInfo.latestOrder,
+      [active]: adminInfo.active,
+      [approved]: adminInfo.approved
     });
     done();
   });
@@ -204,6 +253,17 @@ describe(`GET /api/account/${newUserId}`, () => {
   });
 });
 
+// describe('GET /api/account/pending-approval', () => {
+//   it('Get info for the newly added client', async (done) => {
+//     const res = await adminUser
+//       .get('/api/account/pending-approval')
+//       .expect(200);
+//     console.log(res.body);
+//     // expect(Array(res.body).length > 0);
+//     done();
+//   });
+// });
+
 describe(`PUT /api/account/${newUserId}`, () => {
   it('Reject info for the newly added client because of a bad request', async (done) => {
     await adminUser
@@ -214,13 +274,44 @@ describe(`PUT /api/account/${newUserId}`, () => {
   });
 });
 
-const updateUser = {
-  id: expect.any(Number),
-  name: newUserName,
-  email: newUserEmail,
-  access_level: 1,
-  active: true
+describe(`PUT /api/account/update-approved/${newUserId}`, () => {
+  it('Reject info for the newly added client because of a bad request', async (done) => {
+    await adminUser
+      .put(`/api/account/${newUserId}`)
+      .send({})
+      .expect(400);
+    done();
+  });
+});
+
+const approveUser = {
+  [id]: expect.any(Number),
+  [name]: newUserName,
+  [email]: newUserEmail,
+  [accessLevel]: 1,
+  [active]: true,
+  [approved]: true
 };
+
+const updateUser = {
+  [id]: expect.any(Number),
+  [name]: newUserName,
+  [email]: newUserEmail,
+  [accessLevel]: 1,
+  [active]: false,
+  [approved]: false
+};
+
+describe(`PUT /api/account/update-approved/${newUserId}`, () => {
+  it('Edit info for the newly added client', async (done) => {
+    const res = await adminUser
+      .put(`/api/account/update-approved/${newUserId}`)
+      .send(approveUser)
+      .expect(200);
+    expect(res.body).toEqual(approveUser);
+    done();
+  });
+});
 
 describe(`PUT /api/account/${newUserId}`, () => {
   it('Edit info for the newly added client', async (done) => {
@@ -249,10 +340,10 @@ describe(`GET /api/account/${newUserId}`, () => {
       .expect(200);
     expect(res.body).toEqual({
       ...updateUser,
-      active: false,
-      household_id: newUserHouseholdID,
-      id: newUserId,
-      latest_order: null
+      [active]: false,
+      [householdID]: newUserHouseholdID,
+      [id]: newUserId,
+      [latestOrder]: null
     });
     done();
   });

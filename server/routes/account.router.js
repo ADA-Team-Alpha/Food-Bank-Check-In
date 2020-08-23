@@ -29,19 +29,38 @@ router.get('/:id', rejectUnauthenticated, async (req, res) => {
     const query = {};
     query.text = sqlSelect.user.getUserInfoQuery;
     query.values = [id];
-    await conn.query('BEGIN');
     const result = await conn.query(query.text, query.values);
-    await conn.query('COMMIT');
-    conn.release();
     if (result.rows[0]) {
       res.status(200).send(result.rows[0]);
     } else {
       res.sendStatus(400);
     }
   } catch (error) {
-    conn.query('ROLLBACK');
     console.log(`Error GET /api/account/${id}`, error);
     res.sendStatus(500);
+  } finally {
+    conn.release();
+  }
+});
+
+router.get('/pending/approval', rejectUnauthenticated, async (req, res) => {
+  const accessLevel = req.user.access_level;
+  // If the current user doesn't have a high enough access level return unauthorized.
+  if (accessLevel < 10) {
+    res.sendStatus(403);
+    return;
+  }
+  const conn = await pool.connect();
+  try {
+    const result = await conn.query(`SELECT account.id, account."name", account.email, profile.household_id
+                                     FROM account LEFT JOIN profile ON account.id = profile.account_id
+                                     WHERE account.approved = FALSE AND account.active = TRUE;`);
+    res.status(200).send(result.rows);
+  } catch (error) {
+    console.log('Error GET /api/account/pending-approval', error);
+    res.sendStatus(500);
+  } finally {
+    conn.release();
   }
 });
 
@@ -71,28 +90,37 @@ router.post('/', async (req, res) => {
     accountQuery.values = [result.rows[0].id, houseId];
     await conn.query(accountQuery.text, accountQuery.values);
     await conn.query('COMMIT');
-    conn.release();
     res.status(200).send(result.rows[0]);
   } catch (error) {
     conn.query('ROLLBACK');
     console.log('Error POST /account', error);
     res.sendStatus(500);
+  } finally {
+    conn.release();
   }
 });
 
+// A volunteer can either decline or accept an account request.
 router.put('/:id', rejectUnauthenticated, async (req, res) => {
   const id = req.params.id;
   const name = req.body.name;
   const email = req.body.email;
   const accessLevel = req.body.access_level;
   const active = req.body.active;
+  const approved = req.body.approved;
 
   if (req.user.access_level < 100) {
     res.sendStatus(403);
     return;
   }
 
-  if (!id || !name || !email || !accessLevel || !active) {
+  if (
+    typeof name !== 'string' ||
+    typeof email !== 'string' ||
+    typeof accessLevel !== 'number' ||
+    typeof active !== 'boolean' ||
+    typeof approved !== 'boolean'
+  ) {
     res.sendStatus(400);
     return;
   }
@@ -100,18 +128,58 @@ router.put('/:id', rejectUnauthenticated, async (req, res) => {
   const conn = await pool.connect();
   try {
     const query = {};
-    query.text = `UPDATE "account" SET "name" = $1, "email" = $2, "access_level" = $3, "active" = $4
-                  WHERE id = $5 RETURNING id, "name", email, access_level, active;`;
-    query.values = [name, email, accessLevel, active, id];
+    query.text = `UPDATE "account" SET "name" = $1, "email" = $2, "access_level" = $3,
+                  "active" = $4, "approved" = $5 WHERE id = $6 
+                  RETURNING id, "name", email, access_level, active, approved;`;
+    query.values = [name, email, accessLevel, active, approved, id];
     await conn.query('BEGIN');
     const result = await conn.query(query.text, query.values);
     await conn.query('COMMIT');
-    conn.release();
     res.status(200).send(result.rows && result.rows[0]);
   } catch (error) {
     conn.query('ROLLBACK');
     console.log('Error PUT /account', error);
     res.sendStatus(500);
+  } finally {
+    conn.release();
+  }
+});
+
+router.put('/update-approved/:id', rejectUnauthenticated, async (req, res) => {
+  const id = req.params.id;
+  const approved = req.body.approved;
+
+  if (req.user.access_level < 10) {
+    res.sendStatus(403);
+    return;
+  }
+  if (
+    typeof approved !== 'boolean'
+  ) {
+    res.sendStatus(400);
+    return;
+  }
+  const conn = await pool.connect();
+  try {
+    const query = {};
+    if (approved) {
+      query.text = `UPDATE "account" SET "approved" = TRUE WHERE id = $1
+                    RETURNING id, "name", email, access_level, active, approved;`;
+    } else {
+      query.text = `UPDATE "account" SET "active" = FALSE WHERE id = $1
+                    RETURNING id, "name", email, access_level, active, approved;`;
+    }
+    query.values = [id];
+    await conn.query('BEGIN');
+    const result = await conn.query(query.text, query.values);
+    await conn.query('COMMIT');
+    res.status(200).send(result.rows && result.rows[0]);
+  } catch (error) {
+    conn.query('ROLLBACK');
+    console.log('Error PUT /account', error);
+    res.sendStatus(500);
+  } finally {
+    conn.release();
   }
 });
 
@@ -131,12 +199,13 @@ router.delete('/:id', rejectUnauthenticated, async (req, res) => {
     await conn.query('BEGIN');
     await conn.query(query.text, query.values);
     await conn.query('COMMIT');
-    conn.release();
     res.sendStatus(204);
   } catch (error) {
     conn.query('ROLLBACK');
     console.log('Error DELETE /account', error);
     res.sendStatus(500);
+  } finally {
+    conn.release();
   }
 });
 

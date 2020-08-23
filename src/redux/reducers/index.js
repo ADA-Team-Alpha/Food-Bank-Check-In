@@ -7,6 +7,7 @@ import completeOrders from "./completeOrdersReducer";
 import waitTime from "./waitTimeReducer";
 import parkingLocations from "./parkingLocations";
 import loading from "./loadingReducer";
+import pendingAccounts from "./pendingAccounts";
 
 // rootReducer is the primary reducer for our entire project
 // It bundles up all of the other reducers so our project can use them.
@@ -18,9 +19,10 @@ const rootReducer = combineReducers({
   login,
   errors,
   account,
+  waitTime,
+  pendingAccounts,
   activeOrders,
   completeOrders,
-  waitTime,
   parkingLocations,
   loading
 });
