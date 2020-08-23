@@ -113,6 +113,12 @@ router.get("/client-order-status", async (req, res) => {
 	POST /api/order/ adds a new order to the database.
 */
 router.post("/", rejectUnauthenticated, async (req, res) => {
+  const accountApproved = req.user.approved;
+  if (!accountApproved) {
+    res.sendStatus(403);
+    return;
+  }
+
   const accountID = req.user.id;
   const accessLevel = req.user.access_level;
 

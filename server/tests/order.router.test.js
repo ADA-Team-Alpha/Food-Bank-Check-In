@@ -123,6 +123,8 @@ describe('Normal client with access level 1 for /api/order', () => {
   });
 });
 
+// TODO Confirm a user can't place an order if they haven't been approved.
+
 // describe("GET to /api/order", () => {
 //   it("Respond with json", async (done) => {
 //     const res = await request
