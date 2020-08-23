@@ -42,7 +42,7 @@ router.get('/:id', rejectUnauthenticated, async (req, res) => {
   }
 });
 
-router.get('/pending-approval', rejectUnauthenticated, async (req, res) => {
+router.get('/pending/approval', rejectUnauthenticated, async (req, res) => {
   const accessLevel = req.user.access_level;
   // If the current user doesn't have a high enough access level return unauthorized.
   if (accessLevel < 10) {
@@ -54,11 +54,7 @@ router.get('/pending-approval', rejectUnauthenticated, async (req, res) => {
     const result = await conn.query(`SELECT id, "name", email, active, approved
                                      FROM account WHERE approved = FALSE AND active = TRUE;`);
     conn.release();
-    if (result.rows[0]) {
-      res.status(200).send(result.rows);
-    } else {
-      res.sendStatus(400);
-    }
+    res.status(200).send(result.rows);
   } catch (error) {
     console.log('Error GET /api/account/pending-approval', error);
     res.sendStatus(500);

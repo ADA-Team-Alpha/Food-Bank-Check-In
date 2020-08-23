@@ -3,9 +3,8 @@ import { put, takeEvery } from 'redux-saga/effects';
 
 function* fetchPendingAccounts() {
   try {
-    const result = yield axios.get('/api/account/pending-approval');
-    console.log('result', result);
-    yield put({ type: 'SET_PENDING_ACCOUNTS', payload: result.body });
+    const result = yield axios.get('/api/account/pending/approval');
+    yield put({ type: 'SET_PENDING_ACCOUNTS', payload: result.data });
   } catch (error) {
     yield put({ type: 'FAILED_REQUEST' });
     console.log('Fetch pending accounts failed', error);
@@ -14,7 +13,7 @@ function* fetchPendingAccounts() {
 
 function* updatePendingAccounts(action) {
   try {
-    yield axios.get(`/api/account/pending-approval/${action.payload}`);
+    yield axios.put(`/api/account/update-approved/${action.payload.id}`, { approved: action.payload.approved });
     yield put({ type: 'FETCH_PENDING_ACCOUNTS' });
   } catch (error) {
     yield put({ type: 'FAILED_REQUEST' });
