@@ -322,14 +322,12 @@ class CheckIn extends React.Component {
                               id="thankYouLogout"
                               onClick={() => {
                                 this.props.dispatch({ type: "SET_SERVER_LOADING" });
-                                this.props.dispatch(
-                                  { type: "LOGOUT" },
-                                  this.props.history.push("/login")
-                                );
+                                this.props.dispatch({ type: "LOGOUT" });
+                                this.props.history.push("/login")
                               }}
                             >
                               Log Out
-                      </button>
+                            </button>
                           </>
                         )}
                       </>

@@ -41,7 +41,7 @@ class PendingAccounts extends Component {
       {
         name: 'Update',
         options: {
-          filter: true,
+          filter: false,
           sort: false,
           empty: true,
           customBodyRenderLite: (dataIndex) => {

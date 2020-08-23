@@ -66,6 +66,47 @@ class Dashboard extends Component {
     this.setState({ showClientInfo: !this.state.showClientInfo });
   };
 
+  updateOrderButton = (prompt, waitTimeMinutes) => {
+    return (
+      <button
+        disabled={
+          !this.state.orderObj.account_id ||
+          this.state.orderObj.checkout_at
+        }
+        id="checkInClient"
+        className="btn btn-large btn-primary"
+        onClick={(event) => {
+          event.preventDefault();
+          this.setState({
+            orderObj: {
+              id: "",
+              name: "",
+              account_id: "",
+              walking_home: "",
+              child_birthday: "",
+              dietary_restrictions: "",
+              snap: "",
+              other: "",
+              pickup_name: "",
+              checkout_at: "",
+              wait_time_minutes: "",
+            },
+            waitTimeMinutes: "15",
+          });
+          this.props.dispatch({
+            type: "ORDER_CHECKOUT",
+            payload: {
+              id: this.state.orderObj.id,
+              waitTimeMinutes: waitTimeMinutes,
+            },
+          });
+        }}
+      >
+        {prompt}
+      </button>
+    )
+  }
+
   render() {
     return (
       <>
@@ -125,42 +166,8 @@ class Dashboard extends Component {
                   <form className="dashForm">
                     <div id="secondColHeader">
                       <h1 id="secondColTitle">Client Information</h1>
-                      <button
-                        disabled={
-                          !this.state.orderObj.account_id ||
-                          this.state.orderObj.checkout_at
-                        }
-                        id="checkInClient"
-                        className="btn btn-large btn-primary"
-                        onClick={(event) => {
-                          event.preventDefault();
-                          this.setState({
-                            orderObj: {
-                              id: "",
-                              name: "",
-                              account_id: "",
-                              walking_home: "",
-                              child_birthday: "",
-                              dietary_restrictions: "",
-                              snap: "",
-                              other: "",
-                              pickup_name: "",
-                              checkout_at: "",
-                              wait_time_minutes: "",
-                            },
-                            waitTimeMinutes: "15",
-                          });
-                          this.props.dispatch({
-                            type: "ORDER_CHECKOUT",
-                            payload: {
-                              id: this.state.orderObj.id,
-                              waitTimeMinutes: this.state.waitTimeMinutes,
-                            },
-                          });
-                        }}
-                      >
-                        Check In
-                      </button>
+                      {this.updateOrderButton('Check In', this.state.waitTimeMinutes)}
+                      {this.updateOrderButton('Decline', null)}
                     </div>
                     {this.state.orderObj.id ? (
                       <>
