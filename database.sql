@@ -18,7 +18,7 @@ CREATE TABLE "account" (
 CREATE TABLE "profile" (
 	"account_id" integer,
 	"household_id" varchar(12) NOT NULL,
-	"latest_order" integer,
+	"latest_order" integer
 ) WITH (
   OIDS=FALSE
 );
