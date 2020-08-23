@@ -51,7 +51,8 @@ describe('GET /api/account/', () => {
       access_level: adminInfo.accessLevel,
       household_id: adminInfo.householdID,
       latest_order: adminInfo.latestOrder,
-      active: adminInfo.active
+      active: adminInfo.active,
+      approved: adminInfo.approved
     });
     done();
   });

@@ -21,11 +21,12 @@ router.get("/", rejectUnauthenticated, async (req, res) => {
       profile.household_id, profile.latest_order FROM "order"
       LEFT JOIN account ON "order".account_id = account.id
       LEFT JOIN profile ON account.id = profile.account_id;`);
-    conn.release();
     res.status(200).send(result.rows);
   } catch (error) {
     console.log("Error GET /api/order", error);
     res.sendStatus(500);
+  } finally {
+    conn.release();
   }
 });
 
@@ -48,11 +49,12 @@ router.get("/active", rejectUnauthenticated, async (req, res) => {
                                     WHERE cast(checkin_at as date) = CURRENT_DATE
                                     AND checkout_at IS NULL
                                     ORDER BY checkin_at DESC;`);
-    conn.release();
     res.status(200).send(result.rows);
   } catch (error) {
     console.log("Error GET /api/order/active", error);
     res.sendStatus(500);
+  } finally {
+    conn.release();
   }
 });
 
@@ -75,11 +77,12 @@ router.get("/complete/today", rejectUnauthenticated, async (req, res) => {
                                     WHERE cast(checkin_at as date) = CURRENT_DATE
                                     AND checkout_at IS NOT NULL
                                     ORDER BY checkin_at DESC;`);
-    conn.release();
     res.status(200).send(result.rows);
   } catch (error) {
     console.log("Error GET /api/order/active", error);
     res.sendStatus(500);
+  } finally {
+    conn.release();
   }
 });
 
@@ -97,11 +100,12 @@ router.get("/client-order-status", async (req, res) => {
                   ORDER BY checkin_at DESC;`;
     query.values = [id];
     const result = await conn.query(query.text, query.values);
-    conn.release();
     res.status(200).send(result.rows);
   } catch (error) {
     console.log("Error GET /api/order/active", error);
     res.sendStatus(500);
+  } finally {
+    conn.release();
   }
 });
 
@@ -109,6 +113,12 @@ router.get("/client-order-status", async (req, res) => {
 	POST /api/order/ adds a new order to the database.
 */
 router.post("/", rejectUnauthenticated, async (req, res) => {
+  const accountApproved = req.user.approved;
+  if (!accountApproved) {
+    res.sendStatus(403);
+    return;
+  }
+
   const accountID = req.user.id;
   const accessLevel = req.user.access_level;
 
@@ -179,12 +189,13 @@ router.post("/", rejectUnauthenticated, async (req, res) => {
     await conn.query("BEGIN");
     const result = await conn.query(query.text, query.values);
     await conn.query("COMMIT");
-    conn.release();
     res.status(201).send(result.rows[0]);
   } catch (error) {
     await conn.query("ROLLBACK");
     console.log("Error POST /api/order", error);
     res.sendStatus(500);
+  } finally {
+    conn.release();
   }
 });
 
@@ -233,12 +244,13 @@ router.put("/checkout/:id", async (req, res) => {
       updateProfileLatestOrderQuery.values
     );
     await conn.query("COMMIT");
-    conn.release();
     res.status(200).send(result.rows);
   } catch (error) {
     conn.query("ROLLBACK");
     console.log("Error PUT /api/order/checkout/id", error);
     res.sendStatus(500);
+  } finally {
+    conn.release();
   }
 });
 
@@ -258,11 +270,12 @@ router.delete("/:id", rejectUnauthenticated, async (req, res) => {
     query.text = 'DELETE FROM "order" WHERE id = $1;';
     query.values = [req.params.id];
     await conn.query(query.text, query.values);
-    conn.release();
     res.sendStatus(204);
   } catch (error) {
     console.log("Error PUT /api/order/checkout/id", error);
     res.sendStatus(500);
+  } finally {
+    conn.release();
   }
 });
 // end DELETE

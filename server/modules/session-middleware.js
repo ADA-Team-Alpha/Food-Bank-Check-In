@@ -16,7 +16,7 @@ module.exports = cookieSession({
   key: 'user',
   reSave: 'false',
   saveUninitialized: false,
-  // Set to 1 hour - 60 min/hour * 60 s/min * 1000 ms/s.
-  maxAge: 60 * 60 * 1000,
+  // Set to 6 hours - 60 min/hour * 60 s/min * 1000 ms/s * 6 for 6 hours..
+  maxAge: 60 * 60 * 1000 * 6,
   secure: false
 });

@@ -1,0 +1,25 @@
+.acceptButton {
+ background-color: rgb(35, 184, 35);
+ color: rgb(211, 211, 211);
+}
+
+.acceptButton:hover {
+ background-color: rgb(0, 151, 0);
+}
+
+.acceptButton:active {
+ background-color: rgb(12, 112, 12);
+}
+
+.declineButton {
+ background-color: rgb(255, 0, 0);
+ color: rgb(211, 211, 211);
+}
+
+.declineButton:hover {
+ background-color: rgb(192, 0, 0);
+}
+
+.declineButton:active {
+ background-color: rgb(139, 0, 0);
+}

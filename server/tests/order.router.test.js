@@ -56,7 +56,8 @@ describe('Normal client with access level 1 for /api/order', () => {
         access_level: 1,
         household_id: testUserHouseholdID,
         latest_order: null,
-        active: true
+        active: true,
+        approved: true
       });
       done();
     });
@@ -121,6 +122,8 @@ describe('Normal client with access level 1 for /api/order', () => {
     });
   });
 });
+
+// TODO Confirm a user can't place an order if they haven't been approved.
 
 // describe("GET to /api/order", () => {
 //   it("Respond with json", async (done) => {
