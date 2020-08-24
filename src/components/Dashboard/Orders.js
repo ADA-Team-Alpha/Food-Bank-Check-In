@@ -7,6 +7,7 @@ import Table from "react-bootstrap/Table";
 import CheckCircleIcon from "@material-ui/icons/CheckCircle";
 import Card from "react-bootstrap/Card";
 import ManualOrder from "./ManualOrder";
+import { state } from '../../VariableTitles/VariableTitles';
 import "./Dashboard.css";
 
 // The Dashboard component is for the dashboard view that is seen by the staff/volunteers
@@ -322,10 +323,10 @@ class Dashboard extends Component {
 
 // Bringing in activeOrders to display in the first column,
 // and completeOrders to display in the third column
-const mapStateToProps = (state) => ({
-  activeOrders: state.activeOrders,
-  completeOrders: state.completeOrders,
-  errors: state.errors
+const mapStateToProps = (globalState) => ({
+  activeOrders: globalState.staff[state.ordersForStaff.activeOrders],
+  completeOrders: globalState.completeOrders,
+  errors: globalState.errors
 });
 
 export default connect(mapStateToProps)(Dashboard);

@@ -13,6 +13,7 @@ import Header from '../Header/Header';
 import ProtectedRoute from '../ProtectedRoute/ProtectedRoute';
 import Dashboard from '../Dashboard/Dashboard';
 import CheckIn from '../CheckIn/CheckIn';
+import { state } from '../../VariableTitles/VariableTitles';
 
 // The App file contains the two main components, Dashboard and CheckIn
 // as well as the register/login routes
@@ -73,9 +74,9 @@ class App extends Component {
 }
 
 // Bringing in accountReducer to compare access level
-const mapStateToProps = (state) => ({
-  account: state.account,
-  loading: state.loading
+const mapStateToProps = (globalState) => ({
+  account: globalState.account,
+  loading: globalState.loading[state.loading.serverIsLoading]
 });
 
 export default connect(mapStateToProps)(App);
