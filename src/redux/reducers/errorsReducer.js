@@ -50,6 +50,32 @@ const orderMessage = (state = "", action) => {
   }
 };
 
+// This message displays if a volunteer was unable to get accounts pending approval
+// that's only displayed in the AccountRequest.js file.
+const staffGetOrderMessage = (state = "", action) => {
+  switch (action.type) {
+    case "SET_UNABLE_TO_GET_ACTIVE_ORDERS_ERROR":
+      return 'Error getting active orders, try refreshing the page.';
+    case "CLEAR_UNABLE_TO_GET_ACTIVE_ORDERS_ERROR":
+      return '';
+    default:
+      return state;
+  }
+};
+
+// This message displays if a volunteer was unable to get active orders
+// that's only displayed in the Orders.js file.
+const staffGetPendingAccountsMessage = (state = "", action) => {
+  switch (action.type) {
+    case "SET_UNABLE_TO_GET_PENDING_ACCOUNTS_ERROR":
+      return 'Error getting accounts that are pending approval, try refreshing the page.';
+    case "CLEAR_UNABLE_TO_GET_PENDING_ACCOUNTS_ERROR":
+      return '';
+    default:
+      return state;
+  }
+};
+
 // make one object that has keys loginMessage, registrationMessage and orderMessage
 // these will be on the redux state at:
 // state.errors.loginMessage, state.errors.registrationMessage and state.errors.orderMessage
@@ -57,4 +83,6 @@ export default combineReducers({
   loginMessage,
   registrationMessage,
   orderMessage,
+  staffGetOrderMessage,
+  staffGetPendingAccountsMessage
 });

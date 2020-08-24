@@ -110,6 +110,7 @@ class Dashboard extends Component {
   render() {
     return (
       <>
+        <h4>{this.props.errors.staffGetOrderMessage}</h4>
         <Container fluid id="dashContainer">
           <Row id="dashRow">
             {/* This first column displays a list of all clients that are currently checked in. 
@@ -323,6 +324,7 @@ class Dashboard extends Component {
 const mapStateToProps = (state) => ({
   activeOrders: state.activeOrders,
   completeOrders: state.completeOrders,
+  errors: state.errors
 });
 
 export default connect(mapStateToProps)(Dashboard);

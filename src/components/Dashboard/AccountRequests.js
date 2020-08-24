@@ -75,6 +75,7 @@ class PendingAccounts extends Component {
     )
     return (
       <>
+        <h4>{this.props.errors.staffGetPendingAccountsMessage}</h4>
         <h5>If any of this information needs to be modified please speak with an administrator.</h5>
         <MuiThemeProvider theme={useStyles}>
           <MUIDataTable title='Pending Accounts' data={data} columns={columns} options={options} />
@@ -86,7 +87,8 @@ class PendingAccounts extends Component {
 
 
 const mapStateToProps = (state) => ({
-  pendingAccounts: state.pendingAccounts
+  pendingAccounts: state.pendingAccounts,
+  errors: state.errors
 });
 
 export default connect(mapStateToProps)(PendingAccounts);
