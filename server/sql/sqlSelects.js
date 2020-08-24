@@ -7,7 +7,6 @@ module.exports = {
                       WHERE account.id = $1;`,
     getOrdersFromToday: `SELECT "order".* FROM "order"
                         WHERE cast(checkin_at as date) = CURRENT_DATE
-                        AND "order".account_id = $1
-                        ORDER BY checkin_at DESC;`
+                        AND "order".account_id = $1;`
   }
 };

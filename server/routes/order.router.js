@@ -189,7 +189,7 @@ router.post("/", rejectUnauthenticated, async (req, res) => {
         return;
       }
     } catch (error) {
-      res.sendStatus(408);
+      res.sendStatus(400);
       return;
     } finally {
       connection.release();
@@ -201,7 +201,7 @@ router.post("/", rejectUnauthenticated, async (req, res) => {
     // Check to see if this client already placed an order today and if so decline it.
     const query = {
       text: sqlSelect.user.getOrdersFromToday,
-      values: accountID
+      values: [accountID]
     };
     const latestOrder = await connect.query(query.text, query.values);
     if (latestOrder[0]) {
