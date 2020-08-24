@@ -5,6 +5,8 @@ import Row from "react-bootstrap/Row";
 import Form from "react-bootstrap/Form";
 import "./Dashboard.css";
 
+const householdID = 'householdID';
+
 // The ManualOrder component is viewed by staff members on the dashboard.
 // Based on conditional rendering, it will be displayed in the second column
 // on the dashboard.  This is how a staff member will manually check-in a client.
@@ -19,9 +21,12 @@ class ManualOrder extends Component {
     snap: false,
     other: "",
     waitTime: "",
-    houseHoldId: "",
+    [householdID]: "",
     waitTimeMinutes: "15",
     pickup_name: "",
+    clientName: "",
+
+    showPersonPickupTextBox: false
   };
 
   render() {
@@ -48,12 +53,26 @@ class ManualOrder extends Component {
                   Enter Household ID:
                   <br></br>
                   <input
-                    type="number"
+                    type="text"
                     name="houseHoldIdManual"
                     id="houseHoldIdInput"
-                    value={this.state.houseHoldId}
+                    value={this.state[householdID]}
                     onChange={(event) =>
-                      this.setState({ houseHoldId: event.target.value })
+                      this.setState({ [householdID]: event.target.value })
+                    }
+                  />
+                </label>
+                <br></br>
+                <label>
+                  Enter the client's name:
+                  <br></br>
+                  <input
+                    type="text"
+                    name="houseHoldIdManual"
+                    id="houseHoldIdInput"
+                    value={this.state.clientName}
+                    onChange={(event) =>
+                      this.setState({ clientName: event.target.value })
                     }
                   />
                 </label>
@@ -70,6 +89,7 @@ class ManualOrder extends Component {
                       }
                     >
                       <>
+                        <option value=""></option>
                         {this.props.parkingLocations.map((location, index) => (
                           <option
                             value={location.id}
@@ -82,22 +102,43 @@ class ManualOrder extends Component {
                     </select>
                   </label>
                 </form>
-                <label htmlFor="pickup_name" id="nameLabel">
-                  Name of person picking up:
-                  <br></br>
-                  <textarea
-                    rows="2"
-                    cols="40"
-                    name="name"
-                    value={this.state.pickup_name}
-                    onChange={(event) =>
+                <label htmlFor="showTextArea" className="checkboxLabel">
+                  Is there another person picking up the order?
+                    <input
+                    type="checkbox"
+                    className="check"
+                    checked={this.state.showPersonPickupTextBox}
+                    onChange={() => {
                       this.setState({
-                        pickup_name: event.target.value,
-                      })
-                    }
-                    placeholder="Full Name"
-                  ></textarea>
+                        showPersonPickupTextBox: !this.state.showPersonPickupTextBox,
+                      });
+                      !this.state.showPersonPickupTextBox &&
+                        this.setState({ pickup_name: "" });
+                    }}
+                  />
                 </label>
+                <br />
+                {this.state.showPersonPickupTextBox && (
+                  <>
+                    <label htmlFor="pickup_name" id="nameLabel">
+                      Please enter the name here:
+                      <br />
+                      <textarea
+                        rows="1"
+                        cols="40"
+                        name="name"
+                        value={this.state.pickup_name}
+                        onChange={(event) =>
+                          this.setState({
+                            pickup_name: event.target.value,
+                          })
+                        }
+                        placeholder="Name of person picking up"
+                      ></textarea>
+                    </label>
+                    <br></br>
+                  </>
+                )}
                 <br></br>
                 <label htmlFor="foodRestrictions" id="foodRestrictionsLabel">
                   Please list any food restrictions here:
@@ -117,7 +158,7 @@ class ManualOrder extends Component {
                 </label>
                 <br></br>
                 <label htmlFor="walking" className="checkboxLabel">
-                  Are you walking home?
+                  Are they walking home?
                   <input
                     type="checkbox"
                     id="walkingHome"
@@ -163,7 +204,7 @@ class ManualOrder extends Component {
                 </label>
                 <br></br>
                 <label htmlFor="snap" className="checkboxLabel">
-                  Are you currently receiving SNAP?
+                  Are they currently receiving SNAP?
                   <input
                     type="checkbox"
                     id="snap"
@@ -195,6 +236,12 @@ class ManualOrder extends Component {
                 manual order is complete.  And we can show the client info again.*/}
                 <button
                   id="submitButtonManual"
+                  disabled={
+                    !this.state.householdID ||
+                    !Boolean(this.state.clientName) ||
+                    !Boolean(this.state.locationID) ||
+                    !Boolean(this.state.waitTimeMinutes)
+                  }
                   onClick={() => {
                     this.props.dispatch({
                       type: "CLEAR_ORDER_PLACEMENT_ERROR",
@@ -202,6 +249,8 @@ class ManualOrder extends Component {
                     this.props.dispatch({
                       type: "SUBMIT_ORDER",
                       payload: {
+                        household_id: this.state[householdID],
+                        client_name: this.state.clientName,
                         location_id: this.state.locationID,
                         dietary_restrictions: this.state.dietaryRestrictions,
                         walking_home: this.state.walkingHome,
