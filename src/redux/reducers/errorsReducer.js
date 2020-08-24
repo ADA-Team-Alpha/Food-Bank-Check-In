@@ -76,6 +76,19 @@ const staffGetPendingAccountsMessage = (state = "", action) => {
   }
 };
 
+// This message displays if a volunteer was unable to place an order for a client
+// that's only displayed in the Orders.js file.
+const staffPlaceOrderMessage = (state = "", action) => {
+  switch (action.type) {
+    case "SET_STAFF_UNABLE_TO_PLACE_ORDER_ERROR":
+      return 'Error placing a manual order. Please confirm you entered the correct information and that the client is approved to place orders.';
+    case "CLEAR_STAFF_UNABLE_TO_PLACE_ORDER_ERROR":
+      return '';
+    default:
+      return state;
+  }
+};
+
 // make one object that has keys loginMessage, registrationMessage and orderMessage
 // these will be on the redux state at:
 // state.errors.loginMessage, state.errors.registrationMessage and state.errors.orderMessage
@@ -83,6 +96,7 @@ export default combineReducers({
   loginMessage,
   registrationMessage,
   orderMessage,
+  staffPlaceOrderMessage,
   staffGetOrderMessage,
   staffGetPendingAccountsMessage
 });

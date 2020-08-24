@@ -238,6 +238,11 @@ tbody {
   font-family: 'Heebo', sans-serif;
 }
 
+#submitButtonManual:disabled {
+  background-color: #7a3d36;
+  border: 1px solid #7a3d36;
+}
+
 #infoName, #infoId {
   font-family: 'Heebo', sans-serif;
   font-weight: bold;
