@@ -28,8 +28,12 @@ function* fetchWaitTime() {
       // to give the order a moment to go through.
       if (response.data[0]) {
         // If the estimated wait time minutes have been specified break the loop and return that value.
-        if (response.data[0].wait_time_minutes !== null) {
-          returnStr = response.data[0].wait_time_minutes;
+        if (response.data[0].checkout_at !== null) {
+          if (!response.data[0].wait_time_minutes) {
+            yield put({ type: 'SET_ORDER_DECLINED_ERROR' });
+          } else {
+            returnStr = response.data[0].wait_time_minutes;
+          }
           processing = false;
         }
       }

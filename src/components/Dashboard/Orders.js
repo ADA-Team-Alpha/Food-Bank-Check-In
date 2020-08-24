@@ -66,9 +66,51 @@ class Dashboard extends Component {
     this.setState({ showClientInfo: !this.state.showClientInfo });
   };
 
+  updateOrderButton = (prompt, waitTimeMinutes) => {
+    return (
+      <button
+        disabled={
+          !this.state.orderObj.account_id ||
+          this.state.orderObj.checkout_at
+        }
+        id="checkInClient"
+        className="btn btn-large btn-primary"
+        onClick={(event) => {
+          event.preventDefault();
+          this.setState({
+            orderObj: {
+              id: "",
+              name: "",
+              account_id: "",
+              walking_home: "",
+              child_birthday: "",
+              dietary_restrictions: "",
+              snap: "",
+              other: "",
+              pickup_name: "",
+              checkout_at: "",
+              wait_time_minutes: "",
+            },
+            waitTimeMinutes: "15",
+          });
+          this.props.dispatch({
+            type: "ORDER_CHECKOUT",
+            payload: {
+              id: this.state.orderObj.id,
+              waitTimeMinutes: waitTimeMinutes,
+            },
+          });
+        }}
+      >
+        {prompt}
+      </button>
+    )
+  }
+
   render() {
     return (
       <>
+        <h4>{this.props.errors.staffGetOrderMessage}</h4>
         <Container fluid id="dashContainer">
           <Row id="dashRow">
             {/* This first column displays a list of all clients that are currently checked in. 
@@ -82,7 +124,11 @@ class Dashboard extends Component {
                       id="addClient"
                       className="btn btn-large btn-primary"
                       type="submit"
-                      onClick={() => this.setState({ showClientInfo: false })}
+                      onClick={event => {
+                        event.preventDefault();
+                        this.setState({ showClientInfo: false }
+                        )
+                      }}
                     >
                       Add Client
                     </button>
@@ -121,42 +167,8 @@ class Dashboard extends Component {
                   <form className="dashForm">
                     <div id="secondColHeader">
                       <h1 id="secondColTitle">Client Information</h1>
-                      <button
-                        disabled={
-                          !this.state.orderObj.account_id ||
-                          this.state.orderObj.checkout_at
-                        }
-                        id="checkInClient"
-                        className="btn btn-large btn-primary"
-                        onClick={(event) => {
-                          event.preventDefault();
-                          this.setState({
-                            orderObj: {
-                              id: "",
-                              name: "",
-                              account_id: "",
-                              walking_home: "",
-                              child_birthday: "",
-                              dietary_restrictions: "",
-                              snap: "",
-                              other: "",
-                              pickup_name: "",
-                              checkout_at: "",
-                              wait_time_minutes: "",
-                            },
-                            waitTimeMinutes: "15",
-                          });
-                          this.props.dispatch({
-                            type: "ORDER_CHECKOUT",
-                            payload: {
-                              id: this.state.orderObj.id,
-                              waitTimeMinutes: this.state.waitTimeMinutes,
-                            },
-                          });
-                        }}
-                      >
-                        Check In
-                      </button>
+                      {this.updateOrderButton('Check In', this.state.waitTimeMinutes)}
+                      {this.updateOrderButton('Decline', null)}
                     </div>
                     {this.state.orderObj.id ? (
                       <>
@@ -272,7 +284,8 @@ class Dashboard extends Component {
                   <Table responsive hover>
                     <tbody>
                       {this.props.completeOrders?.map((complete, index) => (
-                        <tr id="checkedInRow"
+                        <tr
+                          id="checkedInRow"
                           key={`complete-orders-${index}`}
                         >
                           <td
@@ -311,6 +324,7 @@ class Dashboard extends Component {
 const mapStateToProps = (state) => ({
   activeOrders: state.activeOrders,
   completeOrders: state.completeOrders,
+  errors: state.errors
 });
 
 export default connect(mapStateToProps)(Dashboard);

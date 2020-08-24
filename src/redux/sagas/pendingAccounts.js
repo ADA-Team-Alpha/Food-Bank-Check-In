@@ -3,10 +3,12 @@ import { put, takeEvery } from 'redux-saga/effects';
 
 function* fetchPendingAccounts() {
   try {
+    yield put({ type: 'CLEAR_UNABLE_TO_GET_PENDING_ACCOUNTS_ERROR' });
     const result = yield axios.get('/api/account/pending/approval');
     yield put({ type: 'SET_PENDING_ACCOUNTS', payload: result.data });
   } catch (error) {
-    yield put({ type: 'FAILED_REQUEST' });
+    yield put({ type: 'SET_UNABLE_TO_GET_PENDING_ACCOUNTS_ERROR' });
+    yield put({ type: 'CLEAR_PENDING_ACCOUNTS' });
     console.log('Fetch pending accounts failed', error);
   }
 }
