@@ -49,10 +49,12 @@ router.get('/search/:name/:householdID', rejectUnauthenticated, async (req, res)
   const accessLevel = req.user.access_level;
   const name = req.params.name;
   const householdID = req.params.householdID;
+
   if (accessLevel < 10) {
     res.sendStatus(403);
     return;
   }
+
   if (
     typeof name !== "string" ||
     typeof householdID !== "string"
@@ -60,6 +62,7 @@ router.get('/search/:name/:householdID', rejectUnauthenticated, async (req, res)
     res.sendStatus(400);
     return;
   }
+
   const conn = await pool.connect();
   try {
     const query = {
@@ -71,12 +74,28 @@ router.get('/search/:name/:householdID', rejectUnauthenticated, async (req, res)
             AND profile.household_id = $2;`,
       values: [name, householdID]
     };
+
     const result = await conn.query(query.text, query.values);
+    let returnClientInfoObj;
     if (result.rows[0]) {
-      res.status(200).send(result.rows[0]);
-    } else {
-      res.sendStatus(404);
+      returnClientInfoObj = result.rows[0];
+      if (returnClientInfoObj.latest_order) {
+        const connect = await pool.connect();
+        try {
+          const getLatestOrderObjectQuery = {
+            text: 'SELECT * FROM "order" WHERE id = $1;',
+            values: [returnClientInfoObj.latest_order]
+          };
+          const orderRow = await conn.query(getLatestOrderObjectQuery.text, getLatestOrderObjectQuery.values);
+          returnClientInfoObj = { ...returnClientInfoObj, latest_order: orderRow.rows[0] ? orderRow.rows[0] : null };
+        } catch (error) {
+          res.sendStatus(404);
+        } finally {
+          connect.release();
+        }
+      }
     }
+    res.status(200).send(returnClientInfoObj);
   } catch (error) {
     console.log(`Error GET /api/account/${name}/${householdID}`, error);
     res.sendStatus(500);

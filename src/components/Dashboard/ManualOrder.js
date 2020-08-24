@@ -4,11 +4,28 @@ import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Form from "react-bootstrap/Form";
 import "./Dashboard.css";
-import { dispatches, state } from '../../VariableTitles/VariableTitles';
+import ErrorIcon from '@material-ui/icons/Error';
+import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
+import { dispatches, state, database, localState } from '../../VariableTitles/VariableTitles';
 import { CircularProgress } from '@material-ui/core';
 const requests = dispatches.requests;
 
-const householdID = 'householdID';
+const locationID = localState.locationID;
+const householdID = localState.householdID;
+const dietaryRestrictions = localState.dietaryRestrictions;
+const walkingHome = localState.walkingHome;
+const pregnant = localState.pregnant;
+const childBirthday = localState.childBirthday;
+const snap = localState.snap;
+const other = localState.other;
+const pickupName = localState.pickupName;
+const waitTimeMinutes = localState.waitTimeMinutes;
+
+const clientName = 'clientName';
+const showPersonPickupTextBox = 'showPersonPickupTextBox';
+const autoFilledInfo = 'autoFilledInfo';
+
+const id = database.account.id;
 
 // The ManualOrder component is viewed by staff members on the dashboard.
 // Based on conditional rendering, it will be displayed in the second column
@@ -16,20 +33,20 @@ const householdID = 'householdID';
 class ManualOrder extends Component {
   // Setting state here for when a staff member would need to manually check-in a client.
   state = {
-    locationID: "",
-    dietaryRestrictions: "",
-    walkingHome: false,
-    pregnant: false,
-    childBirthday: false,
-    snap: false,
-    other: "",
-    waitTime: "",
+    [locationID]: "",
     [householdID]: "",
-    waitTimeMinutes: "15",
-    pickup_name: "",
-    clientName: "",
+    [dietaryRestrictions]: "",
+    [walkingHome]: false,
+    [pregnant]: false,
+    [childBirthday]: false,
+    [snap]: false,
+    [other]: "",
+    [pickupName]: "",
+    [waitTimeMinutes]: "15",
 
-    showPersonPickupTextBox: false
+    [clientName]: "",
+    [showPersonPickupTextBox]: false,
+    [autoFilledInfo]: false
   };
 
   seeIfUserIsValid = (name, householdID) => {
@@ -42,6 +59,55 @@ class ManualOrder extends Component {
     });
   }
 
+  clear = () => {
+    this.props.toggleShowClientInfo();
+    this.resetState(true);
+    this.props.dispatch({ type: dispatches.staff.clearSearchResultClientInfo });
+  }
+
+  resetState = (resetSearchInfo) => {
+    this.setState({
+      [locationID]: "",
+      [dietaryRestrictions]: "",
+      [walkingHome]: false,
+      [pregnant]: false,
+      [childBirthday]: false,
+      [snap]: false,
+      [other]: "",
+      [pickupName]: "",
+      [waitTimeMinutes]: "15",
+
+      [showPersonPickupTextBox]: false,
+      [autoFilledInfo]: false
+    });
+    resetSearchInfo && this.setState({
+      [clientName]: "",
+      [householdID]: "",
+    });
+  }
+
+  componentDidUpdate() {
+    const clientInfo = this.props.clientInfo;
+    // If client info was found autofill the form.
+    if (clientInfo[database.profile.latest_order] && this.state[autoFilledInfo] === false) {
+      this.setState({
+        [dietaryRestrictions]: clientInfo.latest_order[database.order.dietary_restrictions],
+        [walkingHome]: clientInfo.latest_order[database.order.walking_home],
+        [pregnant]: clientInfo.latest_order[database.order.pregnant],
+        [childBirthday]: clientInfo.latest_order[database.order.child_birthday],
+        [snap]: clientInfo.latest_order[database.order.snap],
+        [other]: clientInfo.latest_order[database.order.other],
+        [pickupName]: clientInfo.latest_order[database.order.pickup_name],
+
+        [showPersonPickupTextBox]: Boolean(clientInfo.latest_order[database.order.pickup_name]),
+        [autoFilledInfo]: true
+      })
+      // Clear the auto filled info.
+    } else if (!clientInfo[id] && this.state[autoFilledInfo] === true) {
+      this.resetState(false);
+    }
+  }
+
   render() {
     return (
       <>
@@ -49,15 +115,22 @@ class ManualOrder extends Component {
           <Row id="clientInfoRow">
             <div id="secondColManualHeader">
               <h1 id="secondColManualTitle">Manually check in a client.</h1>
-              {/* {this.props.staffGetClientIsLoading ?
+              <br />
+              {this.props.staffGetClientIsLoading ?
                 <CircularProgress style={{ color: '#18bc3c' }} />
-                : <ErrorIcon style={{ color: '#d31f1f', fontSize: 45 }} />
-                <CheckCircleOutlineIcon style={{ color: '#18bc3c', fontSize: 45 }} />
-              } */}
+                : this.props.clientInfo[database.account.active] === false || this.props.clientInfo[database.account.approved] === false ?
+                  <ErrorIcon style={{ color: '#d31f1f', fontSize: 47 }} />
+                  : this.props.clientInfo[database.account.id] ?
+                    <CheckCircleOutlineIcon style={{ color: '#18bc3c', fontSize: 47 }} />
+                    : <ErrorIcon style={{ color: '#ffe100', fontSize: 47 }} />
+              }
+
               <button
                 id="cancelButton"
                 className="btn btn-large btn-primary"
-                onClick={() => this.props.toggleShowClientInfo()}
+                onClick={() => {
+                  this.clear();
+                }}
               >
                 Cancel
               </button>
@@ -77,7 +150,7 @@ class ManualOrder extends Component {
                     value={this.state[householdID]}
                     onChange={(event) => {
                       this.setState({ [householdID]: event.target.value })
-                      this.seeIfUserIsValid(this.state.name, event.target.value);
+                      this.seeIfUserIsValid(this.state[clientName], event.target.value);
                     }}
                   />
                 </label>
@@ -133,7 +206,7 @@ class ManualOrder extends Component {
                         showPersonPickupTextBox: !this.state.showPersonPickupTextBox,
                       });
                       !this.state.showPersonPickupTextBox &&
-                        this.setState({ pickup_name: "" });
+                        this.setState({ [pickupName]: "" });
                     }}
                   />
                 </label>
@@ -147,10 +220,10 @@ class ManualOrder extends Component {
                         rows="1"
                         cols="40"
                         name="name"
-                        value={this.state.pickup_name}
+                        value={this.state[pickupName]}
                         onChange={(event) =>
                           this.setState({
-                            pickup_name: event.target.value,
+                            [pickupName]: event.target.value,
                           })
                         }
                         placeholder="Name of person picking up"
@@ -264,9 +337,6 @@ class ManualOrder extends Component {
                   }
                   onClick={() => {
                     this.props.dispatch({
-                      type: "CLEAR_ORDER_PLACEMENT_ERROR",
-                    });
-                    this.props.dispatch({
                       type: "SUBMIT_ORDER",
                       payload: {
                         household_id: this.state[householdID],
@@ -282,7 +352,7 @@ class ManualOrder extends Component {
                         wait_time_minutes: this.state.waitTimeMinutes,
                       },
                     });
-                    this.props.toggleShowClientInfo();
+                    this.clear();
                   }}
                 >
                   Submit
@@ -298,6 +368,7 @@ class ManualOrder extends Component {
 
 const mapStateToProps = (globalState) => ({
   parkingLocations: globalState.parkingLocations,
+  clientInfo: globalState.staff[state.staff.searchResultClientInfo],
   staffGetClientIsLoading: globalState.loading[state.loading.staffGetClientIsLoading]
 });
 

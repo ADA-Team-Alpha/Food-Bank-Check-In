@@ -38,11 +38,12 @@ function* fetchInfo() {
 
 function* staffSearchForClient(action) {
   try {
-    yield put({ type: dispatches.loading.setStaffGetClientIsLoading });
+    yield put({ type: dispatches.loading.setStaffGetClientInfoIsLoading });
+    yield put({ type: dispatches.staff.clearSearchResultClientInfo });
     const name = action.payload.name || 'A';
     const householdID = action.payload.householdID || '0';
     const clientResult = yield axios.get(`api/account/search/${name}/${householdID}`);
-    console.log(clientResult);
+    yield put({ type: dispatches.staff.setSearchResultClientInfo, payload: clientResult.data });
   } catch (error) {
     console.log('Client search request failed', error);
     yield put({ type: 'FAILED_REQUEST' });

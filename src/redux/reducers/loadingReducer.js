@@ -12,9 +12,9 @@ const serverIsLoadingReducer = (state = true, action) => {
   }
 };
 
-const staffGetUserIsLoadingReducer = (state = true, action) => {
+const staffGetUserIsLoadingReducer = (state = false, action) => {
   switch (action.type) {
-    case dispatches.loading.setStaffGetClientIsLoading:
+    case dispatches.loading.setStaffGetClientInfoIsLoading:
       return true;
     case dispatches.loading.clearStaffGetClientIsLoading:
       return false;

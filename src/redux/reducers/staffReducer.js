@@ -3,15 +3,27 @@ import { state, dispatches } from '../../VariableTitles/VariableTitles';
 
 const activeOrdersReducer = (state = [], action) => {
   switch (action.type) {
-    case dispatches.ordersForStaff.setActiveOrders:
+    case dispatches.staff.setActiveOrders:
       return [...action.payload];
-    case dispatches.ordersForStaff.clearActiveOrders:
+    case dispatches.staff.clearActiveOrders:
       return [];
     default:
       return state;
   }
 };
 
+const manualOrderClientInfoReducer = (state = {}, action) => {
+  switch (action.type) {
+    case dispatches.staff.setSearchResultClientInfo:
+      return action.payload;
+    case dispatches.staff.clearSearchResultClientInfo:
+      return {};
+    default:
+      return state;
+  }
+};
+
 export default combineReducers({
-  [state.ordersForStaff.activeOrders]: activeOrdersReducer
+  [state.staff.activeOrders]: activeOrdersReducer,
+  [state.staff.searchResultClientInfo]: manualOrderClientInfoReducer
 });
