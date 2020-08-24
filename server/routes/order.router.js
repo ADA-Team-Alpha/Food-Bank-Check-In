@@ -120,9 +120,11 @@ router.post("/", rejectUnauthenticated, async (req, res) => {
     return;
   }
 
-  const accountID = req.user.id;
-  const accessLevel = req.user.access_level;
+  let accountID = req.user.id;
+  const householdID = req.body.household_id;
+  const clientName = req.body.client_name;
 
+  const accessLevel = req.user.access_level;
   const locationID = req.body.location_id;
   const dietaryRestrictions = req.body.dietary_restrictions;
   const walkingHome = req.body.walking_home;
@@ -132,16 +134,6 @@ router.post("/", rejectUnauthenticated, async (req, res) => {
   const pickupName = req.body.pickup_name;
   const other = req.body.other;
   let waitTimeMinutes = null;
-
-  // If the current user doesn't have a high enough access level return unauthorized.
-  if (accessLevel >= 10) {
-    try {
-      waitTimeMinutes = Number(req.body.wait_time_minutes);
-    } catch (error) {
-      res.sendStatus(400);
-      return;
-    }
-  }
 
   // TODO only allow volunteers to specify the wait time.
   if (
@@ -156,6 +148,54 @@ router.post("/", rejectUnauthenticated, async (req, res) => {
   ) {
     res.sendStatus(400);
     return;
+  }
+
+  // If the current user doesn't have a high enough access level return unauthorized.
+  if (accessLevel >= 10) {
+    if (!clientName || !householdID) {
+      res.sendStatus(400);
+      return;
+    }
+
+    try {
+      waitTimeMinutes = Number(req.body.wait_time_minutes);
+    } catch (error) {
+      res.sendStatus(400);
+      return;
+    }
+
+    const connection = await pool.connect();
+    try {
+      const getUserIDQuery = {
+        text: `SELECT account.id, account."name",
+              account.access_level, account.active, account.approved,
+              profile.household_id, profile.latest_order FROM account
+              LEFT JOIN profile ON account.id = profile.account_id
+              WHERE account."name" = $1
+              AND profile.household_id = $2;`,
+        values: [clientName, householdID]
+      };
+      const result = await connection.query(
+        getUserIDQuery.text,
+        getUserIDQuery.values
+      );
+      const clientObj = result.rows && result.rows[0];
+      if (clientObj) {
+        accountID = clientObj.id;
+      } else {
+        res.sendStatus(404);
+        return;
+      }
+      if (clientObj.active === false || clientObj.approved === false) {
+        res.sendStatus(405);
+        return;
+      }
+    } catch (error) {
+      res.sendStatus(408);
+      return;
+    } finally {
+      connection.release();
+    }
   }
 
   const conn = await pool.connect();
@@ -189,6 +229,19 @@ router.post("/", rejectUnauthenticated, async (req, res) => {
     ];
     await conn.query("BEGIN");
     const result = await conn.query(query.text, query.values);
+    // do a second query that updates the user's profile to include the latest order
+    const updateProfileLatestOrderQuery = {};
+    updateProfileLatestOrderQuery.text = `UPDATE "profile"
+      SET latest_order = $1
+      WHERE account_id = $2;`;
+    updateProfileLatestOrderQuery.values = [
+      result.rows[0].id,
+      accountID
+    ];
+    await conn.query(
+      updateProfileLatestOrderQuery.text,
+      updateProfileLatestOrderQuery.values
+    );
     await conn.query("COMMIT");
     res.status(201).send(result.rows[0]);
   } catch (error) {
@@ -234,19 +287,6 @@ router.put("/checkout/:id", async (req, res) => {
     const result = await conn.query(
       placeOrderQuery.text,
       placeOrderQuery.values
-    );
-    // do a second query that updates the user's profile to include the latest order
-    const updateProfileLatestOrderQuery = {};
-    updateProfileLatestOrderQuery.text = `UPDATE "profile"
-      SET latest_order = $1
-      WHERE account_id = $2;`;
-    updateProfileLatestOrderQuery.values = [
-      result.rows[0].id,
-      result.rows[0].account_id,
-    ];
-    await conn.query(
-      updateProfileLatestOrderQuery.text,
-      updateProfileLatestOrderQuery.values
     );
     await conn.query("COMMIT");
     res.status(200).send(result.rows);

@@ -130,7 +130,7 @@ class Dashboard extends Component {
                         )
                       }}
                     >
-                      Add Client
+                      Manual Check In
                     </button>
                   </div>
                   <Table responsive hover>
