@@ -27,7 +27,8 @@ function* fetchInfo() {
     yield put({ type: 'SET_PARKING_LOCATIONS', payload: locationsResponse.data });
   } catch (error) {
     console.log('User get request failed', error);
-    yield put({ type: 'FAILED_REQUEST' });
+    // TODO Have an error message specific to not getting user info while the user is signed out.
+    // yield put({ type: 'FAILED_REQUEST' });
   } finally {
     yield put({ type: 'CLEAR_SERVER_LOADING' });
   }
