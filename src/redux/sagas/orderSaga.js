@@ -3,6 +3,7 @@ import { takeLatest, put, delay } from 'redux-saga/effects';
 
 function* submitCheckIn(action) {
   try {
+    yield put({ type: 'CLEAR_ORDER_PLACEMENT_ERROR' });
     yield put({ type: 'CLEAR_STAFF_UNABLE_TO_PLACE_ORDER_ERROR' });
     yield axios.post('/api/order', action.payload);
   } catch (error) {

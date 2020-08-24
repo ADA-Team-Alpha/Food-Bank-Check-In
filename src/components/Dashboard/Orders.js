@@ -324,7 +324,7 @@ class Dashboard extends Component {
 // Bringing in activeOrders to display in the first column,
 // and completeOrders to display in the third column
 const mapStateToProps = (globalState) => ({
-  activeOrders: globalState.staff[state.ordersForStaff.activeOrders],
+  activeOrders: globalState.staff[state.staff.activeOrders],
   completeOrders: globalState.completeOrders,
   errors: globalState.errors
 });
