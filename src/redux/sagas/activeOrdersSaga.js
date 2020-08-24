@@ -6,10 +6,13 @@ import { put, takeLatest } from 'redux-saga/effects';
 // "FETCH_ACTIVE_ORDERS" actions.
 function* fetchActiveOrders() {
   try {
+    yield put({ type: 'CLEAR_UNABLE_TO_GET_ACTIVE_ORDERS_ERROR' });
     const response = yield axios.get('/api/order/active');
     yield put({ type: 'SET_ACTIVE_ORDERS', payload: response.data });
   } catch (error) {
-    yield put({ type: 'FAILED_REQUEST' });
+    yield put({ type: 'SET_UNABLE_TO_GET_ACTIVE_ORDERS_ERROR' });
+    yield put({ type: 'CLEAR_COMPLETE_ORDERS' });
+    yield put({ type: 'CLEAR_ACTIVE_ORDERS' });
     console.log('Order get request failed', error);
   }
 }

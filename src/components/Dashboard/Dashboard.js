@@ -34,9 +34,10 @@ class Dashboard extends Component {
             </div>
           </Row>
           <button
+            id='toggleViewModeButton'
             onClick={() => this.setState({ showAccountRequestsPage: !this.state.showAccountRequestsPage })}
           >
-            Switch
+            {this.state.showAccountRequestsPage ? 'Active Orders' : 'Pending Accounts'}
           </button>
           {this.state.showAccountRequestsPage ?
             <AccountRequests />

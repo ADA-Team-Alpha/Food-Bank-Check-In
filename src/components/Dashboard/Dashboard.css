@@ -243,3 +243,16 @@ tbody {
   font-weight: bold;
   color: #424B54;;
 }
+
+#toggleViewModeButton {
+  background-color: rgb(255, 158, 46);
+  /* color: rgb(214, 214, 214); */
+}
+
+#toggleViewModeButton:hover {
+ background-color: rgb(255, 173, 80);
+}
+
+#toggleViewModeButton:active {
+ background-color: rgb(255, 146, 22);
+}

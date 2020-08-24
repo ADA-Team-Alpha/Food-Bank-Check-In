@@ -76,6 +76,7 @@ router.get("/complete/today", rejectUnauthenticated, async (req, res) => {
                                     LEFT JOIN profile ON account.id = profile.account_id 
                                     WHERE cast(checkin_at as date) = CURRENT_DATE
                                     AND checkout_at IS NOT NULL
+                                    AND wait_time_minutes IS NOT NULL
                                     ORDER BY checkin_at DESC;`);
     res.status(200).send(result.rows);
   } catch (error) {
@@ -210,11 +211,15 @@ router.put("/checkout/:id", async (req, res) => {
     return;
   }
   let waitTimeMinutes;
-  try {
-    waitTimeMinutes = Number(req.body.wait_time_minutes);
-  } catch (error) {
-    res.sendStatus(400);
-    return;
+  if (req.body.wait_time_minutes !== null) {
+    try {
+      waitTimeMinutes = Number(req.body.wait_time_minutes);
+    } catch (error) {
+      res.sendStatus(400);
+      return;
+    }
+  } else {
+    waitTimeMinutes = null;
   }
 
   const conn = await pool.connect();

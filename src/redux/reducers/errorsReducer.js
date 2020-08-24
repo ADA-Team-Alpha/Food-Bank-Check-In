@@ -32,7 +32,7 @@ const registrationMessage = (state = "", action) => {
   }
 };
 
-// orderMessage holds the string that will display 
+// orderMessage holds the string that will display
 // at the end of a client check-in if there's an error
 // checking them in
 const orderMessage = (state = "", action) => {
@@ -41,7 +41,35 @@ const orderMessage = (state = "", action) => {
       return 'Error placing order, please try again.';
     case "SET_RETRIEVE_ACTIVE_ORDER_ERROR":
       return 'Sorry, unable to update your order status. Someone will be with you shortly.';
+    case "SET_ORDER_DECLINED_ERROR":
+      return 'Sorry, your order has been declined. If you believe this to be a mistake please speak with someone from the Food Pantry.';
     case "CLEAR_ORDER_PLACEMENT_ERROR":
+      return '';
+    default:
+      return state;
+  }
+};
+
+// This message displays if a volunteer was unable to get accounts pending approval
+// that's only displayed in the AccountRequest.js file.
+const staffGetOrderMessage = (state = "", action) => {
+  switch (action.type) {
+    case "SET_UNABLE_TO_GET_ACTIVE_ORDERS_ERROR":
+      return 'Error getting active orders, try refreshing the page.';
+    case "CLEAR_UNABLE_TO_GET_ACTIVE_ORDERS_ERROR":
+      return '';
+    default:
+      return state;
+  }
+};
+
+// This message displays if a volunteer was unable to get active orders
+// that's only displayed in the Orders.js file.
+const staffGetPendingAccountsMessage = (state = "", action) => {
+  switch (action.type) {
+    case "SET_UNABLE_TO_GET_PENDING_ACCOUNTS_ERROR":
+      return 'Error getting accounts that are pending approval, try refreshing the page.';
+    case "CLEAR_UNABLE_TO_GET_PENDING_ACCOUNTS_ERROR":
       return '';
     default:
       return state;
@@ -55,4 +83,6 @@ export default combineReducers({
   loginMessage,
   registrationMessage,
   orderMessage,
+  staffGetOrderMessage,
+  staffGetPendingAccountsMessage
 });
