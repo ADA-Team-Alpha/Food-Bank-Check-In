@@ -4,6 +4,7 @@ const {
   rejectUnauthenticated,
 } = require("../modules/authentication-middleware");
 const pool = require("../modules/pool");
+const sqlSelect = require('../sql/sqlSelects');
 
 /*
 	GET /api/order/ requests ALL orders in the database
@@ -95,10 +96,7 @@ router.get("/client-order-status", async (req, res) => {
   const conn = await pool.connect();
   try {
     const query = {};
-    query.text = `SELECT "order".* FROM "order"
-                  WHERE cast(checkin_at as date) = CURRENT_DATE
-                  AND "order".account_id = $1
-                  ORDER BY checkin_at DESC;`;
+    query.text = sqlSelect.user.getOrdersFromToday;
     query.values = [id];
     const result = await conn.query(query.text, query.values);
     res.status(200).send(result.rows);
@@ -196,6 +194,25 @@ router.post("/", rejectUnauthenticated, async (req, res) => {
     } finally {
       connection.release();
     }
+  }
+
+  const connect = await pool.connect();
+  try {
+    // Check to see if this client already placed an order today and if so decline it.
+    const query = {
+      text: sqlSelect.user.getOrdersFromToday,
+      values: accountID
+    };
+    const latestOrder = await connect.query(query.text, query.values);
+    if (latestOrder[0]) {
+      res.sendStatus(403);
+      return;
+    }
+  } catch (error) {
+    res.sendStatus(500);
+    return;
+  } finally {
+    connect.release();
   }
 
   const conn = await pool.connect();
