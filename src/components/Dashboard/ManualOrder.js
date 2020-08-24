@@ -4,6 +4,9 @@ import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Form from "react-bootstrap/Form";
 import "./Dashboard.css";
+import { dispatches, state } from '../../VariableTitles/VariableTitles';
+import { CircularProgress } from '@material-ui/core';
+const requests = dispatches.requests;
 
 const householdID = 'householdID';
 
@@ -29,6 +32,16 @@ class ManualOrder extends Component {
     showPersonPickupTextBox: false
   };
 
+  seeIfUserIsValid = (name, householdID) => {
+    this.props.dispatch({
+      type: requests.staffSearchForClientInfo,
+      payload: {
+        name: name,
+        householdID: householdID
+      }
+    });
+  }
+
   render() {
     return (
       <>
@@ -36,6 +49,11 @@ class ManualOrder extends Component {
           <Row id="clientInfoRow">
             <div id="secondColManualHeader">
               <h1 id="secondColManualTitle">Manually check in a client.</h1>
+              {/* {this.props.staffGetClientIsLoading ?
+                <CircularProgress style={{ color: '#18bc3c' }} />
+                : <ErrorIcon style={{ color: '#d31f1f', fontSize: 45 }} />
+                <CheckCircleOutlineIcon style={{ color: '#18bc3c', fontSize: 45 }} />
+              } */}
               <button
                 id="cancelButton"
                 className="btn btn-large btn-primary"
@@ -57,9 +75,10 @@ class ManualOrder extends Component {
                     name="houseHoldIdManual"
                     id="houseHoldIdInput"
                     value={this.state[householdID]}
-                    onChange={(event) =>
+                    onChange={(event) => {
                       this.setState({ [householdID]: event.target.value })
-                    }
+                      this.seeIfUserIsValid(this.state.name, event.target.value);
+                    }}
                   />
                 </label>
                 <br></br>
@@ -71,9 +90,10 @@ class ManualOrder extends Component {
                     name="houseHoldIdManual"
                     id="houseHoldIdInput"
                     value={this.state.clientName}
-                    onChange={(event) =>
-                      this.setState({ clientName: event.target.value })
-                    }
+                    onChange={(event) => {
+                      this.setState({ clientName: event.target.value });
+                      this.seeIfUserIsValid(event.target.value, this.state.householdID);
+                    }}
                   />
                 </label>
                 <form>
@@ -276,10 +296,9 @@ class ManualOrder extends Component {
   }
 }
 
-const mapStateToProps = (state) => ({
-  activeOrders: state.activeOrders,
-  completeOrders: state.completeOrders,
-  parkingLocations: state.parkingLocations,
+const mapStateToProps = (globalState) => ({
+  parkingLocations: globalState.parkingLocations,
+  staffGetClientIsLoading: globalState.loading[state.loading.staffGetClientIsLoading]
 });
 
 export default connect(mapStateToProps)(ManualOrder);

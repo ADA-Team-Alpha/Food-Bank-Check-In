@@ -43,6 +43,48 @@ router.get('/:id', rejectUnauthenticated, async (req, res) => {
   }
 });
 
+// An admin can get all the information about a client by doing a get request with the account id.
+// As of version one there is no interface for doing this though.
+router.get('/search/:name/:householdID', rejectUnauthenticated, async (req, res) => {
+  const accessLevel = req.user.access_level;
+  const name = req.params.name;
+  const householdID = req.params.householdID;
+  if (accessLevel < 10) {
+    res.sendStatus(403);
+    return;
+  }
+  if (
+    typeof name !== "string" ||
+    typeof householdID !== "string"
+  ) {
+    res.sendStatus(400);
+    return;
+  }
+  const conn = await pool.connect();
+  try {
+    const query = {
+      text: `SELECT account.id, account."name",
+            account.active, account.approved,
+            profile.household_id, profile.latest_order FROM account
+            LEFT JOIN profile ON account.id = profile.account_id
+            WHERE account."name" = $1
+            AND profile.household_id = $2;`,
+      values: [name, householdID]
+    };
+    const result = await conn.query(query.text, query.values);
+    if (result.rows[0]) {
+      res.status(200).send(result.rows[0]);
+    } else {
+      res.sendStatus(404);
+    }
+  } catch (error) {
+    console.log(`Error GET /api/account/${name}/${householdID}`, error);
+    res.sendStatus(500);
+  } finally {
+    conn.release();
+  }
+});
+
 router.get('/pending/approval', rejectUnauthenticated, async (req, res) => {
   const accessLevel = req.user.access_level;
   // If the current user doesn't have a high enough access level return unauthorized.

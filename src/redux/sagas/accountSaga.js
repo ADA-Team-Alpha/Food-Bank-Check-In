@@ -1,5 +1,7 @@
 import axios from 'axios';
 import { put, takeLatest } from 'redux-saga/effects';
+import { dispatches } from '../../VariableTitles/VariableTitles';
+const requests = dispatches.requests;
 
 // This will get info about the current user and the parking locations.
 // Will be fired on "FETCH_INFO" actions.
@@ -34,8 +36,24 @@ function* fetchInfo() {
   }
 }
 
+function* staffSearchForClient(action) {
+  try {
+    yield put({ type: dispatches.loading.setStaffGetClientIsLoading });
+    const name = action.payload.name || 'A';
+    const householdID = action.payload.householdID || '0';
+    const clientResult = yield axios.get(`api/account/search/${name}/${householdID}`);
+    console.log(clientResult);
+  } catch (error) {
+    console.log('Client search request failed', error);
+    yield put({ type: 'FAILED_REQUEST' });
+  } finally {
+    yield put({ type: dispatches.loading.clearStaffGetClientIsLoading });
+  }
+}
+
 function* accountSaga() {
   yield takeLatest('FETCH_INFO', fetchInfo);
+  yield takeLatest(requests.staffSearchForClientInfo, staffSearchForClient);
 }
 
 export default accountSaga;
