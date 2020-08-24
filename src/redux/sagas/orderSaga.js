@@ -3,9 +3,14 @@ import { takeLatest, put, delay } from 'redux-saga/effects';
 
 function* submitCheckIn(action) {
   try {
+    yield put({ type: 'CLEAR_STAFF_UNABLE_TO_PLACE_ORDER_ERROR' });
     yield axios.post('/api/order', action.payload);
   } catch (error) {
     yield put({ type: 'SET_ORDER_PLACEMENT_ERROR' });
+    yield put({ type: 'SET_STAFF_UNABLE_TO_PLACE_ORDER_ERROR' });
+    // Pause for 30 seconds before automatically dismissing the error.
+    yield delay(30 * 1000);
+    yield put({ type: 'CLEAR_STAFF_UNABLE_TO_PLACE_ORDER_ERROR' });
     console.log('User get request failed', error);
   }
 }
@@ -22,7 +27,7 @@ function* fetchWaitTime() {
     // specified by a volunteer/admin because the user was checked in.
     while (processing === true) {
       // Pause for 5 seconds before looping again.
-      yield delay(5000);
+      yield delay(5 * 1000);
       const response = yield axios.get('/api/order/client-order-status');
       // The get finds orders for today's date so keep looping
       // to give the order a moment to go through.

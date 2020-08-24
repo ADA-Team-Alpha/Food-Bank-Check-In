@@ -111,6 +111,7 @@ class Dashboard extends Component {
     return (
       <>
         <h4>{this.props.errors.staffGetOrderMessage}</h4>
+        <h4>{this.props.errors.staffPlaceOrderMessage}</h4>
         <Container fluid id="dashContainer">
           <Row id="dashRow">
             {/* This first column displays a list of all clients that are currently checked in. 
