@@ -16,6 +16,7 @@ class PendingAccounts extends Component {
   }
 
   componentDidMount = () => {
+    this.props.dispatch({ type: "FETCH_PENDING_ACCOUNTS" });
     const pendingInterval = setInterval(
       () => this.props.dispatch({ type: "FETCH_PENDING_ACCOUNTS" }),
       10 * 1000
