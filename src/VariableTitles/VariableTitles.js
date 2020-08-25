@@ -10,7 +10,9 @@ module.exports = {
       setActiveOrders: 'SET_ACTIVE_ORDERS',
       clearActiveOrders: 'CLEAR_ACTIVE_ORDERS',
       setSearchResultClientInfo: 'SET_SEARCH_RESULT_CLIENT_INFO',
-      clearSearchResultClientInfo: 'CLEAR_SEARCH_RESULT_CLIENT_INFO'
+      clearSearchResultClientInfo: 'CLEAR_SEARCH_RESULT_CLIENT_INFO',
+      setSuccessfullySubmittedManualClientOrder: 'SET_SUCCESSFULLY_SUBMITTED_MANUAL_CLIENT_ORDER',
+      clearSuccessfullySubmittedManualClientOrder: 'CLEAR_SUCCESSFULLY_SUBMITTED_MANUAL_CLIENT_ORDER'
     },
     loading: {
       setServerLoading: 'SET_SERVER_LOADING',
@@ -29,7 +31,8 @@ module.exports = {
     },
     staff: {
       activeOrders: 'activeOrders',
-      searchResultClientInfo: 'searchResultClientInfo'
+      searchResultClientInfo: 'searchResultClientInfo',
+      submittedManualOrderSuccess: 'submittedManualOrderSuccess'
     }
   },
   localState: {

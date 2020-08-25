@@ -23,7 +23,19 @@ const manualOrderClientInfoReducer = (state = {}, action) => {
   }
 };
 
+const manualOrderSuccessfullySubmittedReducer = (state = '', action) => {
+  switch (action.type) {
+    case dispatches.staff.setSuccessfullySubmittedManualClientOrder:
+      return 'You successfully placed an order!';
+    case dispatches.staff.clearSuccessfullySubmittedManualClientOrder:
+      return '';
+    default:
+      return state;
+  }
+};
+
 export default combineReducers({
   [state.staff.activeOrders]: activeOrdersReducer,
-  [state.staff.searchResultClientInfo]: manualOrderClientInfoReducer
+  [state.staff.searchResultClientInfo]: manualOrderClientInfoReducer,
+  [state.staff.submittedManualOrderSuccess]: manualOrderSuccessfullySubmittedReducer
 });
