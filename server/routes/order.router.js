@@ -166,11 +166,11 @@ router.post("/", rejectUnauthenticated, async (req, res) => {
     try {
       const getUserIDQuery = {
         text: `SELECT account.id, account."name",
-              account.access_level, account.active, account.approved,
-              profile.household_id, profile.latest_order FROM account
+              account.active, account.approved,
+              profile.household_id FROM account
               LEFT JOIN profile ON account.id = profile.account_id
-              WHERE account."name" = $1
-              AND profile.household_id = $2;`,
+              WHERE account."name" ILIKE $1
+              AND profile.household_id ILIKE $2;`,
         values: [clientName, householdID]
       };
       const result = await connection.query(

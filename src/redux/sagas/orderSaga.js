@@ -1,10 +1,15 @@
 import axios from 'axios';
 import { takeLatest, put, delay } from 'redux-saga/effects';
+import { dispatches } from '../../VariableTitles/VariableTitles';
 
 function* submitCheckIn(action) {
   try {
+    yield put({ type: 'CLEAR_ORDER_PLACEMENT_ERROR' });
     yield put({ type: 'CLEAR_STAFF_UNABLE_TO_PLACE_ORDER_ERROR' });
     yield axios.post('/api/order', action.payload);
+    yield put({ type: dispatches.staff.setSuccessfullySubmittedManualClientOrder });
+    yield delay(10 * 1000);
+    yield put({ type: dispatches.staff.clearSuccessfullySubmittedManualClientOrder });
   } catch (error) {
     yield put({ type: 'SET_ORDER_PLACEMENT_ERROR' });
     yield put({ type: 'SET_STAFF_UNABLE_TO_PLACE_ORDER_ERROR' });

@@ -1,12 +1,29 @@
-const setWaitTimeReducer = (state = true, action) => {
+import { combineReducers } from 'redux';
+import { state, dispatches } from '../../VariableTitles/VariableTitles';
+
+const serverIsLoadingReducer = (state = true, action) => {
   switch (action.type) {
-    case "SET_SERVER_LOADING":
+    case dispatches.loading.setServerLoading:
       return true;
-    case "CLEAR_SERVER_LOADING":
+    case dispatches.loading.clearServerLoading:
       return false;
     default:
       return state;
   }
 };
 
-export default setWaitTimeReducer;
+const staffGetUserIsLoadingReducer = (state = false, action) => {
+  switch (action.type) {
+    case dispatches.loading.setStaffGetClientInfoIsLoading:
+      return true;
+    case dispatches.loading.clearStaffGetClientIsLoading:
+      return false;
+    default:
+      return state;
+  }
+};
+
+export default combineReducers({
+  [state.loading.serverIsLoading]: serverIsLoadingReducer,
+  [state.loading.staffGetClientIsLoading]: staffGetUserIsLoadingReducer
+});
