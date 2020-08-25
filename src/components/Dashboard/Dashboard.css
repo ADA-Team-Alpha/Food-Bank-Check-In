@@ -24,8 +24,8 @@
 button {
   background-color: transparent;
   border: none;
-  color: #424B54;
-  font-family: 'Heebo', sans-serif;
+  color: #424b54;
+  font-family: "Heebo", sans-serif;
 }
 
 thead {
@@ -33,7 +33,7 @@ thead {
 }
 
 tbody {
-  color: #424B54;
+  color: #424b54;
   font-size: 18px;
 }
 
@@ -41,13 +41,14 @@ tbody {
   margin-top: 20px;
 }
 
-#addClient, #checkInClient{
+#addClient,
+#checkInClient {
   float: right;
   background-color: white;
-  color: #B13324;
+  color: #b13324;
   border: none;
   transition: 200ms;
-  font-family: 'Heebo', sans-serif;
+  font-family: "Heebo", sans-serif;
   font-weight: bold;
 }
 
@@ -57,16 +58,18 @@ tbody {
 
 #cancelButton {
   background-color: white;
-  color: #B13324;
+  color: #b13324;
   border: none;
   transition: 200ms;
-  font-family: 'Heebo', sans-serif; 
+  font-family: "Heebo", sans-serif;
   font-weight: bold;
   margin-left: 15px;
   float: right;
 }
 
-#checkInClient:hover, #addClient:hover, #cancelButton:hover {
+#checkInClient:hover,
+#addClient:hover,
+#cancelButton:hover {
   background-color: transparent;
   color: white;
   transition: 200ms;
@@ -85,7 +88,7 @@ tbody {
   margin-bottom: -10px;
 }
 
-#firstColHeader {  
+#firstColHeader {
   padding: 10px;
   background-color: #faaf46;
   margin: 0px;
@@ -105,39 +108,41 @@ tbody {
 #secondColManualTitle {
   color: white;
   font-size: 30px;
-  display: inline-block;  
+  display: inline-block;
   font-weight: bold;
   margin-bottom: -10px;
 }
 
 #secondColManualHeader {
-  background-color: #424B54;
+  background-color: #424b54;
   padding: 10px;
   margin: 0px;
   width: 100%;
-  display: inline-block;   
+  display: inline-block;
 }
 
 #secondColHeader {
-  background-color: #8AA8A1;
+  background-color: #8aa8a1;
   padding: 10px;
   margin: 0px;
   margin-top: -20px;
   width: 100%;
-  display: inline-block;  
+  display: inline-block;
 }
 
-#firstCard, #secondCard, #thirdCard {
+#firstCard,
+#secondCard,
+#thirdCard {
   height: 675px;
   overflow: scroll;
-  font-family: 'Heebo', sans-serif;
+  font-family: "Heebo", sans-serif;
 }
 
 #dashBody {
   margin-top: 20px;
   margin-left: 20px;
-  font-family: 'Heebo', sans-serif;
-  color: #424B54;
+  font-family: "Heebo", sans-serif;
+  color: #424b54;
 }
 
 #thirdCol {
@@ -147,7 +152,7 @@ tbody {
 
 #thirdColTitle {
   color: white;
-  background-color: #9AC2C5;
+  background-color: #9ac2c5;
   padding-top: 10px;
   padding-left: 10px;
   padding-right: 10px;
@@ -171,9 +176,9 @@ tbody {
 
 #dashboardTitle {
   display: inline-block;
-  font-family: 'Heebo', sans-serif;
+  font-family: "Heebo", sans-serif;
   font-weight: bolder;
-  color: #424B54;
+  color: #424b54;
   font-size: 45px;
 }
 
@@ -187,9 +192,9 @@ tbody {
 
 #selectText {
   margin: 50px;
-  font-family: 'Heebo', sans-serif;
+  font-family: "Heebo", sans-serif;
   font-weight: bolder;
-  color: #424B54;
+  color: #424b54;
   font-size: 35px;
   text-align: center;
 }
@@ -205,8 +210,8 @@ tbody {
 #waitTimeLabel {
   padding-left: 20px;
   padding-right: 20px;
-  font-size: 20px;  
-  color: #424B54;
+  font-size: 20px;
+  color: #424b54;
 }
 
 #houseHoldIdInput {
@@ -230,12 +235,12 @@ tbody {
 #submitButtonManual {
   font-size: 18px;
   color: white;
-  background-color: #B13324;
-  border: 1px solid #B13324;
+  background-color: #b13324;
+  border: 1px solid #b13324;
   border-radius: 50px;
   width: 30%;
-  transition: 200ms; 
-  font-family: 'Heebo', sans-serif;
+  transition: 200ms;
+  font-family: "Heebo", sans-serif;
 }
 
 #submitButtonManual:disabled {
@@ -243,10 +248,11 @@ tbody {
   border: 1px solid #7a3d36;
 }
 
-#infoName, #infoId {
-  font-family: 'Heebo', sans-serif;
+#infoName,
+#infoId {
+  font-family: "Heebo", sans-serif;
   font-weight: bold;
-  color: #424B54;;
+  color: #424b54;
 }
 
 #toggleViewModeButton {
@@ -255,9 +261,16 @@ tbody {
 }
 
 #toggleViewModeButton:hover {
- background-color: rgb(255, 173, 80);
+  background-color: rgb(255, 173, 80);
 }
 
 #toggleViewModeButton:active {
- background-color: rgb(255, 146, 22);
+  background-color: rgb(255, 146, 22);
+}
+
+.iconExplanationText {
+  position: relative;
+  /* background-color: red; */
+  margin-left: -5px;
+  margin-top: -5px;
 }

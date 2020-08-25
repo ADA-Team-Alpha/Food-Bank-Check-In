@@ -28,8 +28,6 @@ passport.deserializeUser(async (id, done) => {
     getLatestOrderObjectQuery.text = 'SELECT * FROM "order" WHERE id = $1;';
     getLatestOrderObjectQuery.values = [user.latest_order];
     const orderRow = await conn.query(getLatestOrderObjectQuery.text, getLatestOrderObjectQuery.values);
-    conn.release();
-
     if (user) {
       // Remove the user's password so it doesn't get sent.
       delete user.password;
@@ -42,8 +40,9 @@ passport.deserializeUser(async (id, done) => {
       done(null, null);
     }
   } catch (error) {
-    conn.query('ROLLBACK');
     console.log('Error getting user information.', error);
+  } finally {
+    conn.release();
   }
 });
 
