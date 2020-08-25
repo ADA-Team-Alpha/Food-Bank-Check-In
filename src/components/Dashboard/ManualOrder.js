@@ -67,7 +67,6 @@ class ManualOrder extends Component {
 
   resetState = (resetSearchInfo) => {
     this.setState({
-      [locationID]: "",
       [dietaryRestrictions]: "",
       [walkingHome]: false,
       [pregnant]: false,
@@ -81,6 +80,7 @@ class ManualOrder extends Component {
       [autoFilledInfo]: false
     });
     resetSearchInfo && this.setState({
+      [locationID]: "",
       [clientName]: "",
       [householdID]: "",
     });
@@ -114,17 +114,17 @@ class ManualOrder extends Component {
         <Container id="checkInContainer">
           <Row id="clientInfoRow">
             <div id="secondColManualHeader">
-              <h1 id="secondColManualTitle">Manually check in a client.</h1>
-              <br />
-              {this.props.staffGetClientIsLoading ?
-                <CircularProgress style={{ color: '#18bc3c' }} />
-                : this.props.clientInfo[database.account.active] === false || this.props.clientInfo[database.account.approved] === false ?
-                  <ErrorIcon style={{ color: '#d31f1f', fontSize: 47 }} />
-                  : this.props.clientInfo[database.account.id] ?
-                    <CheckCircleOutlineIcon style={{ color: '#18bc3c', fontSize: 47 }} />
-                    : <ErrorIcon style={{ color: '#ffe100', fontSize: 47 }} />
-              }
-
+              <h1 id="secondColManualTitle">Manually check in a client.
+                <br />
+                {this.props.staffGetClientIsLoading ?
+                  <><CircularProgress style={{ color: '#18bc3c' }} /><>Searching...</></>
+                  : this.props.clientInfo[database.account.active] === false || this.props.clientInfo[database.account.approved] === false ?
+                    <><ErrorIcon style={{ color: '#d31f1f', fontSize: 62 }} className='iconExplanationText' /><>Client can't place orders.</></>
+                    : this.props.clientInfo[database.account.id] ?
+                      <><CheckCircleOutlineIcon style={{ color: '#18bc3c', fontSize: 62 }} className='iconExplanationText' /><>That's a valid client!</></>
+                      : <><ErrorIcon style={{ color: '#ffe100', fontSize: 62 }} className='iconExplanationText' /><>Client not found.</></>
+                }
+              </h1>
               <button
                 id="cancelButton"
                 className="btn btn-large btn-primary"
@@ -324,6 +324,24 @@ class ManualOrder extends Component {
                   />
                 </label>
                 <br />
+                <label htmlFor="nameLabel" className="checkboxLabel">
+                  Please choose a wait time:
+                  <select
+                    value={this.state[waitTimeMinutes]}
+                    onChange={(event) =>
+                      this.setState({
+                        [waitTimeMinutes]: event.target.value,
+                      })
+                    }
+                  >
+                    <>
+                      <option value="15">15 minutes</option>
+                      <option value="30">30 minutes</option>
+                      <option value="45">45 minutes</option>
+                      <option value="60">1 hour</option>
+                    </>
+                  </select>
+                </label>
                 {/* On submit of the form, we dispatch to "SUBMIT_ORDER" with a payload of 
                 all the new state set by the staff input.  Then the
                 manual order is complete.  And we can show the client info again.*/}
@@ -333,7 +351,10 @@ class ManualOrder extends Component {
                     !this.state.householdID ||
                     !Boolean(this.state.clientName) ||
                     !Boolean(this.state.locationID) ||
-                    !Boolean(this.state.waitTimeMinutes)
+                    !Boolean(this.state.waitTimeMinutes) ||
+                    !Boolean(this.props.clientInfo[database.account.id]) ||
+                    this.props.clientInfo[database.account.active] === false ||
+                    this.props.clientInfo[database.account.approved] === false
                   }
                   onClick={() => {
                     this.props.dispatch({
@@ -347,7 +368,7 @@ class ManualOrder extends Component {
                         pregnant: this.state.pregnant,
                         child_birthday: this.state.childBirthday,
                         snap: this.state.snap,
-                        pickup_name: this.state.pickup_name,
+                        pickup_name: this.state[pickupName],
                         other: this.state.other,
                         wait_time_minutes: this.state.waitTimeMinutes,
                       },

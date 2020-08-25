@@ -70,14 +70,18 @@ router.get('/search/:name/:householdID', rejectUnauthenticated, async (req, res)
             account.active, account.approved,
             profile.household_id, profile.latest_order FROM account
             LEFT JOIN profile ON account.id = profile.account_id
-            WHERE account."name" = $1
-            AND profile.household_id = $2;`,
-      values: [name, householdID]
+            WHERE account."name" ILIKE $1
+            AND profile.household_id ILIKE $2;`,
+      values: [`%${name}%`, `%${householdID}%`]
     };
 
     const result = await conn.query(query.text, query.values);
     let returnClientInfoObj;
     if (result.rows[0]) {
+      if (result.rows.length > 1) {
+        res.sendStatus(204);
+        return;
+      }
       returnClientInfoObj = result.rows[0];
       if (returnClientInfoObj.latest_order) {
         const connect = await pool.connect();
