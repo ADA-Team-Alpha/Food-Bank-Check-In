@@ -29,6 +29,14 @@ class App extends Component {
       <Router>
         <div>
           <Header />
+          <label>
+            Please list any food restrictions here:
+            <button
+              onClick={() => {
+                socket.emit('chat message', 'Value');
+              }}
+            >Submit</button>
+          </label>
           <Switch>
             {/* Access level 1 is a client, access level 10 or higher is staff
                 Route redirecting is based on the access level */}
