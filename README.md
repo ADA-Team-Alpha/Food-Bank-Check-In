@@ -39,7 +39,7 @@ For development, you will only need Node.js installed on your environement. And 
 ```
 DATABASE_URL=url
 ```
-
+DATABASE_NAME if local
 
 The queries in the tables.sql file are set up to create all the necessary tables and populate the needed data to allow the application to run correctly. The project is built on Postgres, so you will need to make sure to have that installed. We recommend using Postico to run those queries as that was used to create the queries,
 2. Open up your editor of choice and run an npm install
