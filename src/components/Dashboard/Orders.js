@@ -67,36 +67,41 @@ class Dashboard extends Component {
     this.setState({ showClientInfo: !this.state.showClientInfo });
   };
 
-  updateOrderButton = (prompt, waitTimeMinutes) => {
+  clearLocalState = () => {
+    this.setState({
+      orderObj: {
+        id: "",
+        name: "",
+        account_id: "",
+        walking_home: "",
+        child_birthday: "",
+        dietary_restrictions: "",
+        snap: "",
+        other: "",
+        pickup_name: "",
+        checkout_at: "",
+        wait_time_minutes: "",
+      },
+      waitTimeMinutes: "15",
+    });
+  }
+
+  updateOrderButton = (prompt, method, waitTimeMinutes) => {
     return (
       <button
         disabled={
           !this.state.orderObj.account_id ||
-          this.state.orderObj.checkout_at
+          (method === "update" && this.state.orderObj.checkout_at)
         }
         id="checkInClient"
-        className="btn btn-large btn-primary"
+        className="btn btn-large btn-primary mr-1"
         onClick={(event) => {
           event.preventDefault();
-          this.setState({
-            orderObj: {
-              id: "",
-              name: "",
-              account_id: "",
-              walking_home: "",
-              child_birthday: "",
-              dietary_restrictions: "",
-              snap: "",
-              other: "",
-              pickup_name: "",
-              checkout_at: "",
-              wait_time_minutes: "",
-            },
-            waitTimeMinutes: "15",
-          });
+          this.clearLocalState();
           this.props.dispatch({
             type: "ORDER_CHECKOUT",
             payload: {
+              method: method,
               id: this.state.orderObj.id,
               waitTimeMinutes: waitTimeMinutes,
             },
@@ -170,8 +175,17 @@ class Dashboard extends Component {
                   <form className="dashForm">
                     <div id="secondColHeader">
                       <h1 id="secondColTitle">Client Information</h1>
-                      {this.updateOrderButton('Check In', this.state.waitTimeMinutes)}
-                      {this.updateOrderButton('Decline', null)}
+                      <div className="d-inline">
+                        {this.state.orderObj.checkout_at ? (
+                            <>{this.updateOrderButton('Remove Order', 'delete', null)}</>
+                          )
+                        :(
+                          <>
+                            {this.updateOrderButton('Check In', 'update', this.state.waitTimeMinutes)}
+                            {this.updateOrderButton('Decline', 'update', null)}
+                          </>
+                        )}
+                      </div>
                     </div>
                     {this.state.orderObj.id ? (
                       <>
@@ -230,7 +244,7 @@ class Dashboard extends Component {
                             <b>{this.state.orderObj.other || "None"}</b>
                           </p>
                         </body>
-                        <label id="waitTimeLabel" for="waitTime">
+                        <label id="waitTimeLabel" htmlFor="waitTime">
                           {!this.state.orderObj.checkout_at &&
                             "Please choose a wait time: "}
                           <select
