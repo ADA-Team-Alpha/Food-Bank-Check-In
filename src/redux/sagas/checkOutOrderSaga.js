@@ -29,8 +29,28 @@ function* checkOutOrder(action) {
   }
 }
 
+function* updateOrderDate(action) {
+  const id = action.payload.id;
+  const date = action.payload.date;
+  try {
+    yield put({ type: 'CLEAR_UNABLE_TO_GET_ACTIVE_ORDERS_ERROR' });
+    // Update checkout and checkin times of the inputted order.
+    yield axios.put(`/api/order/date/${id}`, { date: date });
+    
+    // Get the active and complete orders again because we just changed one.
+    yield put({ type: 'FETCH_ACTIVE_ORDERS' });
+    yield put({ type: 'FETCH_COMPLETE_ORDERS' });
+  } catch (error) {
+    yield put({ type: 'SET_UNABLE_TO_GET_ACTIVE_ORDERS_ERROR' });
+    yield put({ type: 'CLEAR_COMPLETE_ORDERS' });
+    yield put({ type: 'CLEAR_ACTIVE_ORDERS' });
+    console.log('Update order date failed', error);
+  }
+}
+
 function* checkOutOrderSaga() {
   yield takeEvery('ORDER_CHECKOUT', checkOutOrder);
+  yield takeEvery('ORDER_DATE', updateOrderDate);
 }
 
 export default checkOutOrderSaga;

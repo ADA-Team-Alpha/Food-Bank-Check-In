@@ -60,9 +60,9 @@ router.get("/active", rejectUnauthenticated, async (req, res) => {
 });
 
 /*
-	GET /api/order/complete/today requests orders that have been checked out on the current date
+	GET /api/order/complete/ requests orders that have been checked out on (and after) the current date
 */
-router.get("/complete/today", rejectUnauthenticated, async (req, res) => {
+router.get("/complete/", rejectUnauthenticated, async (req, res) => {
   const accessLevel = req.user.access_level;
   // If the current user doesn't have a high enough access level return unauthorized.
   if (accessLevel < 10) {
@@ -75,7 +75,7 @@ router.get("/complete/today", rejectUnauthenticated, async (req, res) => {
                                     profile.household_id, profile.latest_order FROM "order"
                                     LEFT JOIN account ON "order".account_id = account.id
                                     LEFT JOIN profile ON account.id = profile.account_id 
-                                    WHERE cast(checkin_at as date) = CURRENT_DATE
+                                    WHERE cast(checkin_at as date) >= CURRENT_DATE
                                     AND checkout_at IS NOT NULL
                                     AND wait_time_minutes IS NOT NULL
                                     ORDER BY checkin_at DESC;`);
@@ -310,6 +310,62 @@ router.put("/checkout/:id", async (req, res) => {
   } catch (error) {
     conn.query("ROLLBACK");
     console.log("Error PUT /api/order/checkout/id", error);
+    res.sendStatus(500);
+  } finally {
+    conn.release();
+  }
+});
+
+/*
+	PUT /api/order/date/:id updates the checkin and checkout date of the order
+*/
+router.put("/date/:id", async (req, res) => {
+  const accessLevel = req.user.access_level;
+  // If the current user doesn't have a high enough access level return unauthorized.
+  if (accessLevel < 10) {
+    res.sendStatus(401);
+    return;
+  }
+
+  const conn = await pool.connect();
+  try {
+    const query = {};
+    const date = req.body.date;
+    const [year, month, day] = [...date.split('-')];
+
+    query.text = `SELECT checkin_at, checkout_at 
+      FROM "order"
+      WHERE id = $1;`;
+    query.values = [req.params.id];
+    const results = await conn.query(query.text, query.values);
+    let checkin = new Date(results.rows[0].checkin_at);
+
+    checkin.setFullYear(year);
+    checkin.setDate(day);
+    checkin.setMonth(month - 1);
+
+    if (results.rows[0].checkout_at) {
+      let checkout = new Date(results.rows[0].checkout_at);
+      checkout.setFullYear(year);
+      checkout.setDate(day);
+      checkout.setMonth(month - 1);
+
+      query.text = `UPDATE "order"
+      SET checkout_at = $1, checkin_at = $2
+      WHERE id = $3;`;
+      query.values = [checkout, checkin, req.params.id];
+    } else {
+      query.text = `UPDATE "order"
+      SET checkout_at = NULL, checkin_at = $1
+      WHERE id = $2;`;
+      query.values = [checkin, req.params.id];
+    }
+    
+    
+    await conn.query(query.text, query.values);
+    res.sendStatus(200);
+  } catch (error) {
+    console.log("Error PUT /api/order/date/id", error);
     res.sendStatus(500);
   } finally {
     conn.release();
