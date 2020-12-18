@@ -21,10 +21,18 @@ import { state } from '../../VariableTitles/VariableTitles';
 // On componentDidMount, 'FETCH_INFO' is dispatched to grab information about the account that is logged in.
 class App extends Component {
   componentDidMount() {
+    //Start Intercom
+    window.Intercom('boot', {
+      app_id: 'pr1cd7v4',
+    });
+
     this.props.dispatch({ type: 'FETCH_INFO' });
   }
 
   render() {
+    //update intercom with each route change
+    window.Intercom("update", {last_request_at: parseInt((new Date()).getTime()/1000)})
+    
     return !this.props.loading ? (
       <Router>
         <div>

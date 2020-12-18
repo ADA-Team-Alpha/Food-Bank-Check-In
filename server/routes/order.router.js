@@ -385,6 +385,28 @@ router.delete("/:id", rejectUnauthenticated, async (req, res) => {
   const conn = await pool.connect();
   try {
     const query = {};
+
+    query.text = 'SELECT account_id FROM "profile" WHERE latest_order = $1';
+    query.values = [req.params.id];
+    const user_id = await conn.query(query.text, query.values);
+
+    if (user_id.rowCount > 0) {
+      query.text = 'SELECT id FROM "order" WHERE account_id = $1 AND account_id != $2 AND checkout_at IS NOT NULL ORDER BY checkout_at DESC';
+      query.values = [user_id.rows[0].account_id, req.params.id];
+      const results = await conn.query(query.text, query.values);
+
+      //update dependency
+      if (results.rowsCount > 0) {
+        query.text = 'UPDATE "profile" SET latest_order = $1 WHERE account_id = $2;'; 
+        query.values = [results.rows[0].id, user_id.rows[0].account_id];
+      } else {
+        query.text = 'UPDATE "profile" SET latest_order = NULL WHERE account_id = $1;'; 
+        query.values = [user_id.rows[0].account_id]
+      }
+      await conn.query(query.text, query.values);
+    }
+
+    //delete order
     query.text = 'DELETE FROM "order" WHERE id = $1;';
     query.values = [req.params.id];
     await conn.query(query.text, query.values);
