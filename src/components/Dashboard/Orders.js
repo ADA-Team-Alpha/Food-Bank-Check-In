@@ -134,7 +134,7 @@ class Dashboard extends Component {
   render() {
     const checkinObj = new Date(this.state.orderObj.checkin_at);
     const checkin = checkinObj.getFullYear() + "-" + (checkinObj.getMonth() + 1) + "-" + checkinObj.getDate();
-    console.log(checkinObj.getDate());
+
     return (
       <>
         <h4>{this.props.errors.staffGetOrderMessage}</h4>

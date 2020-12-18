@@ -338,25 +338,30 @@ router.put("/date/:id", async (req, res) => {
       WHERE id = $1;`;
     query.values = [req.params.id];
     const results = await conn.query(query.text, query.values);
-    let checkout = new Date(results.rows[0].checkout_at);
     let checkin = new Date(results.rows[0].checkin_at);
 
-    if (checkin) {
-      checkin.setFullYear(year);
-      checkin.setDate(day);
-      checkin.setMonth(month - 1);
-    } 
+    checkin.setFullYear(year);
+    checkin.setDate(day);
+    checkin.setMonth(month - 1);
 
-    if (checkout) {
+    if (results.rows[0].checkout_at) {
+      let checkout = new Date(results.rows[0].checkout_at);
       checkout.setFullYear(year);
       checkout.setDate(day);
       checkout.setMonth(month - 1);
-    } 
-    
-    query.text = `UPDATE "order"
+
+      query.text = `UPDATE "order"
       SET checkout_at = $1, checkin_at = $2
       WHERE id = $3;`;
-    query.values = [checkout, checkin, req.params.id];
+      query.values = [checkout, checkin, req.params.id];
+    } else {
+      query.text = `UPDATE "order"
+      SET checkout_at = NULL, checkin_at = $1
+      WHERE id = $2;`;
+      query.values = [checkin, req.params.id];
+    }
+    
+    
     await conn.query(query.text, query.values);
     res.sendStatus(200);
   } catch (error) {

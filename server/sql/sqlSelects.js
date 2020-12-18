@@ -6,7 +6,7 @@ module.exports = {
                       LEFT JOIN profile ON account.id = profile.account_id
                       WHERE account.id = $1;`,
     getOrdersFromToday: `SELECT "order".* FROM "order"
-                        WHERE cast(checkin_at as date) >= CURRENT_DATE
+                        WHERE cast(checkin_at as date) = CURRENT_DATE
                         AND "order".account_id = $1;`
   }
 };
