@@ -60,9 +60,9 @@ router.get("/active", rejectUnauthenticated, async (req, res) => {
 });
 
 /*
-	GET /api/order/complete/today requests orders that have been checked out on the current date
+	GET /api/order/complete/ requests orders that have been checked out on (and after) the current date
 */
-router.get("/complete/today", rejectUnauthenticated, async (req, res) => {
+router.get("/complete/", rejectUnauthenticated, async (req, res) => {
   const accessLevel = req.user.access_level;
   // If the current user doesn't have a high enough access level return unauthorized.
   if (accessLevel < 10) {
@@ -75,7 +75,7 @@ router.get("/complete/today", rejectUnauthenticated, async (req, res) => {
                                     profile.household_id, profile.latest_order FROM "order"
                                     LEFT JOIN account ON "order".account_id = account.id
                                     LEFT JOIN profile ON account.id = profile.account_id 
-                                    WHERE cast(checkin_at as date) = CURRENT_DATE
+                                    WHERE cast(checkin_at as date) >= CURRENT_DATE
                                     AND checkout_at IS NOT NULL
                                     AND wait_time_minutes IS NOT NULL
                                     ORDER BY checkin_at DESC;`);
