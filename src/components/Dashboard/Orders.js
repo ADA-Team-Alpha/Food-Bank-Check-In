@@ -295,7 +295,8 @@ class Dashboard extends Component {
                                 disabled={
                                   !this.state.orderObj.account_id ||
                                   !this.state.orderObj.checkout_at
-                                }>
+                                }
+                                min={checkin}>
                               </input>
                         </label>
                       </> // Conditional rendering here --> If there is no name selected from the first column,
