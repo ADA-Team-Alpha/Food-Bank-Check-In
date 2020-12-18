@@ -317,6 +317,57 @@ router.put("/checkout/:id", async (req, res) => {
 });
 
 /*
+	PUT /api/order/date/:id updates the checkin and checkout date of the order
+*/
+router.put("/date/:id", async (req, res) => {
+  const accessLevel = req.user.access_level;
+  // If the current user doesn't have a high enough access level return unauthorized.
+  if (accessLevel < 10) {
+    res.sendStatus(401);
+    return;
+  }
+
+  const conn = await pool.connect();
+  try {
+    const query = {};
+    const date = req.body.date;
+    const [year, month, day] = [...date.split('-')];
+
+    query.text = `SELECT checkin_at, checkout_at 
+      FROM "order"
+      WHERE id = $1;`;
+    query.values = [req.params.id];
+    const results = await conn.query(query.text, query.values);
+    let checkout = new Date(results.rows[0].checkout_at);
+    let checkin = new Date(results.rows[0].checkin_at);
+
+    if (checkin) {
+      checkin.setFullYear(year);
+      checkin.setDate(day);
+      checkin.setMonth(month - 1);
+    } 
+
+    if (checkout) {
+      checkout.setFullYear(year);
+      checkout.setDate(day);
+      checkout.setMonth(month - 1);
+    } 
+    
+    query.text = `UPDATE "order"
+      SET checkout_at = $1, checkin_at = $2
+      WHERE id = $3;`;
+    query.values = [checkout, checkin, req.params.id];
+    await conn.query(query.text, query.values);
+    res.sendStatus(200);
+  } catch (error) {
+    console.log("Error PUT /api/order/date/id", error);
+    res.sendStatus(500);
+  } finally {
+    conn.release();
+  }
+});
+
+/*
 	DELETE /api/order/:id deletes an order from the database. Admin only
 */
 router.delete("/:id", rejectUnauthenticated, async (req, res) => {

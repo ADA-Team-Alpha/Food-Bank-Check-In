@@ -28,6 +28,7 @@ class Dashboard extends Component {
       other: ' ',
       pickup_name: '',
       checkout_at: ' ',
+      checkin_at: '',
       wait_time_minutes: '15',
       location_id: '',
     },
@@ -90,6 +91,7 @@ class Dashboard extends Component {
               other: "",
               pickup_name: "",
               checkout_at: "",
+              checkin_at: "",
               wait_time_minutes: "",
             },
             waitTimeMinutes: "15",
@@ -108,7 +110,31 @@ class Dashboard extends Component {
     )
   }
 
+  updateOrderDate = (event) => {
+    let orderObj = this.state.orderObj;
+    const checkin = new Date(orderObj.checkin_at);
+    const [year, month, day] = [...event.target.value.split('-')];
+    checkin.setFullYear(year);
+    checkin.setMonth(month - 1);
+    checkin.setDate(day);
+    orderObj.checkin_at = checkin;
+    
+    this.setState({
+      orderObj: orderObj
+    });
+    this.props.dispatch({
+      type: "ORDER_DATE",
+      payload: {
+        id: this.state.orderObj.id,
+        date: event.target.value,
+      },
+    });
+  }
+
   render() {
+    const checkinObj = new Date(this.state.orderObj.checkin_at);
+    const checkin = checkinObj.getFullYear() + "-" + (checkinObj.getMonth() + 1) + "-" + checkinObj.getDate();
+    console.log(checkinObj.getDate());
     return (
       <>
         <h4>{this.props.errors.staffGetOrderMessage}</h4>
@@ -260,6 +286,11 @@ class Dashboard extends Component {
                                 </>
                               )}
                           </select>
+                        </label>  
+                        <hr/>
+                        <label id="orderDateLabel" htmlFor="orderDate" className="clientInformation">
+                              Order Date: 
+                              <input type="date" value={checkin} onChange={(event) => {this.updateOrderDate(event)}}></input>
                         </label>
                       </> // Conditional rendering here --> If there is no name selected from the first column,
                     ) : (
