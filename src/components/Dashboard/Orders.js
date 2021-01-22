@@ -144,12 +144,10 @@ class Dashboard extends Component {
     const checkinObj = new Date(this.state.orderObj.checkin_at);
     const todayObj = new Date();
     let checkinMonth = checkinObj.getMonth() + 1;
-    let todayMonth = todayObj.getMonth() + 1;
     if (checkinObj.getMonth() < 10) {
       checkinMonth = "0" + checkinMonth;
-      todayMonth = "0" + todayMonth;
     }
-    const today = todayObj.getFullYear() + "-" + todayMonth + "-" + todayObj.getDate();
+    const today = todayObj.toISOString().split("T")[0];
     const checkin = checkinObj.getFullYear() + "-" + checkinMonth + "-" + checkinObj.getDate();
 
     return (
