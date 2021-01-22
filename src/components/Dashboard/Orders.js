@@ -142,7 +142,12 @@ class Dashboard extends Component {
 
   render() {
     const checkinObj = new Date(this.state.orderObj.checkin_at);
-    const checkin = checkinObj.getFullYear() + "-" + (checkinObj.getMonth() + 1) + "-" + checkinObj.getDate();
+    let checkinMonth = checkinObj.getMonth() + 1;
+    if (checkinObj.getMonth() < 10) {
+      checkinMonth = "0" + checkinMonth;
+    }
+    const today = (new Date()).toISOString().split("T")[0];
+    const checkin = checkinObj.getFullYear() + "-" + checkinMonth + "-" + checkinObj.getDate();
 
     return (
       <>
@@ -314,7 +319,7 @@ class Dashboard extends Component {
                                   !this.state.orderObj.account_id ||
                                   !this.state.orderObj.checkout_at
                                 }
-                                min={checkin}>
+                                min={today}>
                               </input>
                         </label>
                       </> // Conditional rendering here --> If there is no name selected from the first column,
