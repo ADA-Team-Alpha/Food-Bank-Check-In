@@ -131,7 +131,8 @@ class CheckIn extends React.Component {
                     <>
                       <br />
                       <div id="clientQuestions">
-                        <p id="lastStep">Final Step</p>
+                        <p className="mb-1" id="lastStep">Final Step</p>
+                        <p><i>Check all that are true</i></p>
                         <label htmlFor="showTextArea" className="checkboxLabel">
                           Is there another person picking up <br /> the order?
                           <input
@@ -218,7 +219,7 @@ class CheckIn extends React.Component {
                         </label>
                         <br></br>
                         <label htmlFor="pregnant" className="checkboxLabel">
-                          Is there a woman in the household who is pregnant?
+                          Is a woman in your home pregnant and need prenatal vitamins?
                           <input
                             type="checkbox"
                             id="pregnant"

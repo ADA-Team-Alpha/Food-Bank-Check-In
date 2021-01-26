@@ -256,7 +256,7 @@ class Dashboard extends Component {
                             </b>
                           </p>
                           <p className="clientInformation">
-                            Someone at home is pregnant:{" "}
+                            Is a woman in your home pregnant and need prenatal vitamins?{" "}
                             <b>
                               {this.state.orderObj.child_birthday
                                 ? "Yes"
