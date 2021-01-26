@@ -94,10 +94,17 @@ class LoginPage extends Component {
           </Row>
           <Row>
             <center id="center">
-              Don't have an account?{" "}
-              <Link to="/register">
-                <button className="changeButton">Register</button>
-              </Link>
+              <p>Don't have an account?{" "}
+                <Link to="/register">
+                  <button className="changeButton">Register</button>
+                </Link>
+              </p>
+              <p>
+                Forgot your password?{" "}
+                <Link to="/forgot">
+                  <button className="changeButton">Reset Password</button>
+                </Link>
+              </p>
             </center>
           </Row>
           {/* If there were to be an error, this is where it would display. */}

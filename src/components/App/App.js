@@ -8,6 +8,7 @@ import {
 } from 'react-router-dom';
 import { connect } from 'react-redux';
 import RegisterPage from '../RegisterPage/RegisterPage';
+import ForgotPage from '../ForgotPage/ForgotPage'
 import LoginPage from '../LoginPage/LoginPage';
 import Header from '../Header/Header';
 import ProtectedRoute from '../ProtectedRoute/ProtectedRoute';
@@ -53,6 +54,9 @@ class App extends Component {
             </Route>
             <Route path="/register">
               <RegisterPage />
+            </Route>
+            <Route path="/forgot">
+                <ForgotPage />
             </Route>
             {/* For protected routes, the view could show one of several things on the same route.
               If the user is not logged in, the ProtectedRoute will show the 'Login' or 'Register' page. */}

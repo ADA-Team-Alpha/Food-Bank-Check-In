@@ -1,0 +1,108 @@
+import React, { Component } from "react";
+import { connect } from "react-redux";
+import Card from "react-bootstrap/Card";
+import Container from "react-bootstrap/Container";
+import Row from "react-bootstrap/Row";
+import AssignmentIcon from "@material-ui/icons/Assignment";
+import Toast from "react-bootstrap/Toast";
+import { withRouter } from "react-router-dom";
+import "./ForgotPage.css";
+
+// The user types in their email and if an account exists under
+// that, an email is sent to them with a link. 
+// The ForgotPage is on the /forgot route.
+
+class ForgotPage extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      email: "",
+    };
+  }
+
+
+  resetPasswordEmail = (event) => {
+    event.preventDefault();
+
+    if (this.state.email) {
+      this.props.dispatch({
+        type: "RESET_PASSWORD_EMAIL",
+        payload: {
+          email: this.state.email,
+        },
+      });
+    } else {
+      this.props.dispatch({ type: "RESET_PASWORD_ERROR" });
+    }
+  };
+
+  componentDidUpdate() {
+    this.props.successfulPasswordResetEmail && this.props.history.push("/login");
+  }
+
+  handleInputChangeFor = (propertyName) => (event) => {
+    this.setState({
+      [propertyName]: event.target.value,
+    });
+  };
+
+  render() {
+    return (
+      <div id="forgotBody">
+        <Container id="forgotContainer">
+          <Row id="forgotRow">
+            <Card id="card">
+              <form onSubmit={this.registerUser}>
+                <div id="welcomeDiv">
+                  <h1 id="forgotTitle">Forgot Password?</h1>
+                  <AssignmentIcon />
+                </div>
+                <div id="forgotDiv">
+                  <div>
+                    <input
+                      type="email"
+                      name="email"
+                      placeholder="Email"
+                      className="formInput"
+                      value={this.state.email}
+                      onChange={this.handleInputChangeFor("email")}
+                    />
+                  </div>
+                </div>
+                <div>
+                  <input
+                    className="formInput"
+                    type="submit"
+                    name="submit"
+                    value="Send Email"
+                    id="forgotPasswordButton"
+                  />
+                </div>
+                {/* If there were to be an error, this is where it is displayed. */}
+                <div id="errorDiv">
+                  {this.props.error && (
+                    <Toast style={{ border: "1px solid #b13324" }}>
+                      <Toast.Body>{this.props.error}</Toast.Body>
+                    </Toast>
+                  )}
+                </div>
+              </form>
+            </Card>
+          </Row>
+        </Container>
+      </div>
+    );
+  }
+}
+
+// Bringing in the errors for error handling, successfulRegistration 
+// to push history to /login, and loginMode so as soon as a new user
+// registers they are then logged in automatically.
+const mapStateToProps = (state) => ({
+  error: state.errors.registrationMessage,
+  successfulPasswordResetEmail: state.login.successfulPasswordResetEmail,
+  loginMode: state.login.loginMode
+});
+
+export default withRouter(connect(mapStateToProps)(ForgotPage));
