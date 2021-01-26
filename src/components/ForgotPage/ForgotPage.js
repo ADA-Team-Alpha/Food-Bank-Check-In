@@ -33,7 +33,7 @@ class ForgotPage extends Component {
         },
       });
     } else {
-      this.props.dispatch({ type: "RESET_PASWORD_ERROR" });
+      this.props.dispatch({ type: "RESET_ERROR" });
     }
   };
 
@@ -53,7 +53,7 @@ class ForgotPage extends Component {
         <Container id="forgotContainer">
           <Row id="forgotRow">
             <Card id="card">
-              <form onSubmit={this.registerUser}>
+              <form onSubmit={this.resetPasswordEmail}>
                 <div id="welcomeDiv">
                   <h1 id="forgotTitle">Forgot Password?</h1>
                   <AssignmentIcon />

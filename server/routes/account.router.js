@@ -274,6 +274,35 @@ router.delete('/:id', rejectUnauthenticated, async (req, res) => {
   }
 });
 
+// Handles POST request when a new user signs up.
+// As of version one anyone can sign up just by registering.
+router.post('/forgot', async (req, res) => {
+  const email = req.body.email;
+  if (!email) {
+    res.sendStatus(400);
+    return;
+  }
+  const conn = await pool.connect();
+  try {
+    const profileQuery = {};
+    profileQuery.text = `SELECT id, name FROM "account" 
+                         WHERE email = $1;`;
+    profileQuery.values = [email];
+    const result = await conn.query(profileQuery.text, profileQuery.values);
+    console.log(result.rows[0]);
+    if (typeof result.rows[0] !== 'undefined') {
+     
+    }
+    res.status(200).send(result.rows[0]);
+  } catch (error) {
+    console.log('Error POST /account/forgot', error);
+    res.sendStatus(500);
+  } finally {
+    conn.release();
+  }
+});
+
+
 // Handles login form authenticate/login POST
 // userStrategy.authenticate('local') is middleware that we run on this route
 // this middleware will run our POST if successful
