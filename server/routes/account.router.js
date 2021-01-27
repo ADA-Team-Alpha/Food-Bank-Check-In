@@ -7,6 +7,7 @@ const encryptLib = require('../modules/encryption');
 const pool = require('../modules/pool');
 const userStrategy = require('../strategies/user.strategy');
 const sqlSelect = require('../sql/sqlSelects');
+const sgMail = require('@sendgrid/mail')
 
 // Handles Ajax request for user information if user is authenticated/signed in.
 router.get('/', rejectUnauthenticated, (req, res) => {
@@ -289,9 +290,10 @@ router.post('/forgot', async (req, res) => {
                          WHERE email = $1;`;
     profileQuery.values = [email];
     const result = await conn.query(profileQuery.text, profileQuery.values);
-    console.log(result.rows[0]);
-    if (typeof result.rows[0] !== 'undefined') {
-     
+    if (typeof result.rows[0] !== 'undefined') { //does the user exist?
+     const resetToken = encryptLib.generateToken(5);
+     const expirationDate = Date.now() + 3600000; //an hour
+
     }
     res.status(200).send(result.rows[0]);
   } catch (error) {
