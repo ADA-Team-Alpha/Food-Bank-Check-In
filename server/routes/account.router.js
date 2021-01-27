@@ -291,12 +291,22 @@ router.post('/forgot', async (req, res) => {
     profileQuery.values = [email];
     const result = await conn.query(profileQuery.text, profileQuery.values);
     if (typeof result.rows[0] !== 'undefined') { //does the user exist?
-     const resetToken = encryptLib.generateToken(5);
-     const expirationDate = Date.now() + 3600000; //an hour
+      const resetToken = encryptLib.generateToken(5);
+      const expirationDate = new Date(Date.now() + 3600000);
+      profileQuery.text = `UPDATE account SET 
+                              reset_password_token = $1, 
+                              reset_password_expires = $2 
+                              WHERE id = $3`; 
+      profileQuery.values = [resetToken, expirationDate, result.rows[0].id];
+      await conn.query('BEGIN');
+      await conn.query(profileQuery.text, profileQuery.values);
+      await conn.query('COMMIT');
 
+      //send email
     }
     res.status(200).send(result.rows[0]);
   } catch (error) {
+    conn.query('ROLLBACK');
     console.log('Error POST /account/forgot', error);
     res.sendStatus(500);
   } finally {
