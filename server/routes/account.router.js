@@ -8,6 +8,7 @@ const pool = require('../modules/pool');
 const userStrategy = require('../strategies/user.strategy');
 const sqlSelect = require('../sql/sqlSelects');
 const sgMail = require('@sendgrid/mail')
+sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 
 // Handles Ajax request for user information if user is authenticated/signed in.
 router.get('/', rejectUnauthenticated, (req, res) => {
@@ -291,7 +292,7 @@ router.post('/forgot', async (req, res) => {
     profileQuery.values = [email];
     const result = await conn.query(profileQuery.text, profileQuery.values);
     if (typeof result.rows[0] !== 'undefined') { //does the user exist?
-      const resetToken = encryptLib.generateToken(5);
+      const resetToken = encryptLib.generateToken(20);
       const expirationDate = new Date(Date.now() + 3600000);
       profileQuery.text = `UPDATE account SET 
                               reset_password_token = $1, 
@@ -303,6 +304,20 @@ router.post('/forgot', async (req, res) => {
       await conn.query('COMMIT');
 
       //send email
+      const msg = {
+        to: 'tyler.persons@codelation.com', // Change to your recipient
+        from: 'tyler.persons@codelation.com', // Change to your verified sender
+        subject: 'Emergency Food Pantry Password Reset',
+        html: `Click <a href='${process.env.HOST}/api/account/forgot/${resetToken}'>here</a> to reset your password.`,
+      }
+      sgMail
+        .send(msg)
+        .then(() => {
+          console.log('Email sent')
+        })
+        .catch((error) => {
+          console.error(error)
+        })
     }
     res.status(200).send(result.rows[0]);
   } catch (error) {
