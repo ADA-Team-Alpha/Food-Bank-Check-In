@@ -276,8 +276,7 @@ router.delete('/:id', rejectUnauthenticated, async (req, res) => {
   }
 });
 
-// Handles POST request when a new user signs up.
-// As of version one anyone can sign up just by registering.
+// Handles POST request when a tries to send a password reset email.
 router.post('/forgot', async (req, res) => {
   const email = req.body.email;
   if (!email) {
@@ -305,18 +304,18 @@ router.post('/forgot', async (req, res) => {
 
       //send email
       const msg = {
-        to: 'tyler.persons@codelation.com', // Change to your recipient
-        from: 'tyler.persons@codelation.com', // Change to your verified sender
+        to: email,
+        from: process.env.DEFAULT_FROM_EMAIL,
         subject: 'Emergency Food Pantry Password Reset',
         html: `Click <a href='${process.env.HOST}/api/account/forgot/${resetToken}'>here</a> to reset your password.`,
       }
       sgMail
         .send(msg)
         .then(() => {
-          console.log('Email sent')
+          console.log('Email sent');
         })
         .catch((error) => {
-          console.error(error)
+          console.error("Error sending email: ", error);
         })
     }
     res.status(200).send(result.rows[0]);
@@ -329,6 +328,48 @@ router.post('/forgot', async (req, res) => {
   }
 });
 
+
+router.post('/forgot/:token', async (req, res) => {
+  const token = req.params.token;
+  const email = req.body.email;
+  const conn = await pool.connect();
+  try {
+    const profileQuery = {};
+    profileQuery.text = `SELECT id, email FROM "account" 
+                         WHERE reset_password_token = $1 AND email = $2;`;
+    profileQuery.values = [token, email];
+    const result = await conn.query(profileQuery.text, profileQuery.values);
+    if (typeof result.rows[0] !== 'undefined') { //does the user exist?
+    
+    }
+  } catch (error) {
+    conn.query('ROLLBACK');
+    console.log('Error POST /account/forgot', error);
+    res.sendStatus(500);
+  } finally {
+    conn.release();
+  }
+});
+
+router.post('/forgot/validate', async (req, res) => {
+  const token = req.body.token;
+  const conn = await pool.connect();
+  const profileQuery = {};
+  profileQuery.text = `SELECT id, reset_password_expires FROM "account" 
+                        WHERE reset_password_token = $1;`;
+  profileQuery.values = [token];
+  const result = await conn.query(profileQuery.text, profileQuery.values);
+  conn.release();
+  const now = new Date(Date.now());
+
+  if (typeof result.rows[0] !== 'undefined' && now < result.rows[0].reset_password_expires) { //does the user exist?
+    console.log(now)
+    res.sendStatus(200);
+  } else {
+    console.log('Error POST /account/forgot', error);
+    res.sendStatus(500)
+  }
+});
 
 // Handles login form authenticate/login POST
 // userStrategy.authenticate('local') is middleware that we run on this route
