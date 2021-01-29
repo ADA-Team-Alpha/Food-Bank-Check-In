@@ -18,7 +18,7 @@ function* resetPasswordEmail(action) {
 
 function* validateToken(action) {
   try {
-    const response = yield axios.post("/api/account/test", action.payload);
+    const response = yield axios.post("/api/account/validate_token", action.payload);
     if (response.data.valid) {
       yield put({type: "SET_TOKEN_VALID"});
     } else {
@@ -30,9 +30,18 @@ function* validateToken(action) {
   }
 }
 
+function* resetPassword(action) {
+  try {
+    yield axios.post("/api/account/change_password/", action.payload);
+  } catch (error) {
+    console.log("Error with pasword reset:", error);
+  }
+}
+
 function* forgotPasswordSaga() {
   yield takeLatest("RESET_PASSWORD_EMAIL", resetPasswordEmail);
   yield takeLatest("VALIDATE_PASSWORD_RESET_TOKEN", validateToken);
+  yield takeLatest("RESET_PASSWORD", resetPassword);
 }
 
 export default forgotPasswordSaga;

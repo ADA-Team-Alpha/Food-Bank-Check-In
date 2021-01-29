@@ -292,7 +292,7 @@ router.post('/forgot', async (req, res) => {
     const result = await conn.query(profileQuery.text, profileQuery.values);
     if (typeof result.rows[0] !== 'undefined') { //does the user exist?
       const resetToken = encryptLib.generateToken(20);
-      const expirationDate = new Date(Date.now() + 3600000);
+      const expirationDate = new Date(Date.now() + 3600000); //1 hour
       profileQuery.text = `UPDATE account SET 
                               reset_password_token = $1, 
                               reset_password_expires = $2 
@@ -329,18 +329,29 @@ router.post('/forgot', async (req, res) => {
 });
 
 
-router.post('/forgot/:token', async (req, res) => {
-  const token = req.params.token;
-  const email = req.body.email;
+router.post('/change_password', async (req, res) => {
+  const token = req.body.token;
+  const newPassword = encryptLib.encryptPassword(req.body.newPassword);
+  const now = new Date(Date.now());
+
   const conn = await pool.connect();
   try {
     const profileQuery = {};
-    profileQuery.text = `SELECT id, email FROM "account" 
-                         WHERE reset_password_token = $1 AND email = $2;`;
-    profileQuery.values = [token, email];
+    profileQuery.text = `SELECT id, reset_password_expires FROM "account" 
+                         WHERE reset_password_token = $1;`;
+    profileQuery.values = [token];
     const result = await conn.query(profileQuery.text, profileQuery.values);
-    if (typeof result.rows[0] !== 'undefined') { //does the user exist?
-    
+    console.log(result)
+    if (typeof result.rows[0] !== 'undefined' && now < result.rows[0].reset_password_expires) { //does the user exist?
+      console.log("in")
+      profileQuery.text = `UPDATE account SET 
+                              password = $1, 
+                              reset_password_expires = $2 
+                              WHERE id = $3`; 
+      profileQuery.values = [newPassword, now, result.rows[0].id];
+      await conn.query('BEGIN');
+      await conn.query(profileQuery.text, profileQuery.values);
+      await conn.query('COMMIT');
     }
   } catch (error) {
     conn.query('ROLLBACK');
@@ -351,7 +362,7 @@ router.post('/forgot/:token', async (req, res) => {
   }
 });
 
-router.post('/test', async (req, res) => {
+router.post('/validate_token', async (req, res) => {
   const token = req.body.token;
   const conn = await pool.connect();
   const profileQuery = {};

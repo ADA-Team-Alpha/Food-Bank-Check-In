@@ -29,18 +29,21 @@ class ResetPage extends Component {
             },
         });
     }
-    resetPasswordEmail = (event) => {
+
+    resetPassword = (event) => {
         event.preventDefault();
 
-        if (this.state.newPassword && this.state.passwordsMatch) {
+        const { token } = this.props.match.params;
+        if (this.state.newPassword && this.state.newPasswordRetyped === this.state.newPassword) {
             this.props.dispatch({
                 type: "RESET_PASSWORD",
                 payload: {
+                    token: token,
                     newPassword: this.state.newPassword
                 },
             });
         } else {
-        this.props.dispatch({ type: "RESET_ERROR" });
+            this.props.dispatch({ type: "RESET_ERROR" });
         }
     };
 
@@ -58,6 +61,7 @@ class ResetPage extends Component {
             <Container id="forgotContainer">
               <Row id="row">
                 <Card id="card">
+                {validToken ?
                   <form onSubmit={this.resetPassword}>
                     <div id="welcomeDiv">
                       <h1 id="title">New Password</h1>
@@ -104,6 +108,9 @@ class ResetPage extends Component {
                       )}
                     </div>
                   </form>
+                :
+                    <p>False</p>
+                }
                 </Card>
               </Row>
             </Container>
