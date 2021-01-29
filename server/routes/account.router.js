@@ -307,7 +307,7 @@ router.post('/forgot', async (req, res) => {
         to: email,
         from: process.env.DEFAULT_FROM_EMAIL,
         subject: 'Emergency Food Pantry Password Reset',
-        html: `Click <a href='${process.env.HOST}/api/account/forgot/${resetToken}'>here</a> to reset your password.`,
+        html: `Click <a href='${process.env.HOST}/#/forgot/${resetToken}'>here</a> to reset your password.`,
       }
       sgMail
         .send(msg)
@@ -341,9 +341,7 @@ router.post('/change_password', async (req, res) => {
                          WHERE reset_password_token = $1;`;
     profileQuery.values = [token];
     const result = await conn.query(profileQuery.text, profileQuery.values);
-    console.log(result)
     if (typeof result.rows[0] !== 'undefined' && now < result.rows[0].reset_password_expires) { //does the user exist?
-      console.log("in")
       profileQuery.text = `UPDATE account SET 
                               password = $1, 
                               reset_password_expires = $2 

@@ -21,7 +21,6 @@ class ResetPage extends Component {
     }
     componentDidMount() {
         const { token } = this.props.match.params; 
-        console.log(token)
         this.props.dispatch({
             type: "VALIDATE_PASSWORD_RESET_TOKEN",
             payload: {
