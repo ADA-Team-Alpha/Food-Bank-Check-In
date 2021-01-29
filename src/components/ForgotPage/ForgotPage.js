@@ -42,10 +42,6 @@ class ForgotPage extends Component {
     }
   };
 
-  componentDidUpdate() {
-    this.props.successfulPasswordResetEmail && this.props.history.push("/login");
-  }
-
   handleInputChangeFor = (propertyName) => (event) => {
     this.setState({
       [propertyName]: event.target.value,
@@ -110,13 +106,9 @@ class ForgotPage extends Component {
   }
 }
 
-// Bringing in the errors for error handling, successfulRegistration 
-// to push history to /login, and loginMode so as soon as a new user
-// registers they are then logged in automatically.
+// Bringing in the errors for error handling
 const mapStateToProps = (state) => ({
   error: state.errors.registrationMessage,
-  successfulPasswordResetEmail: state.login.successfulPasswordResetEmail,
-  loginMode: state.login.loginMode
 });
 
 export default withRouter(connect(mapStateToProps)(ForgotPage));

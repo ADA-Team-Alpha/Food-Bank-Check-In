@@ -33,8 +33,12 @@ function* validateToken(action) {
 function* resetPassword(action) {
   try {
     yield axios.post("/api/account/change_password/", action.payload);
+    
+    //Switches to Login Page
+    yield put({ type: "DISPLAY_SUCCESSFUL_RESET_MESSAGE" });
   } catch (error) {
     console.log("Error with pasword reset:", error);
+    yield put({ type: "CLEAR_SUCCESSFUL_RESET_MESSAGE" });
   }
 }
 

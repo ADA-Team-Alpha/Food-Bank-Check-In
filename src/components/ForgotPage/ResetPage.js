@@ -29,6 +29,10 @@ class ResetPage extends Component {
         });
     }
 
+    componentDidUpdate() {
+      this.props.successfulPasswordReset && this.props.history.push("/login");
+    }
+
     resetPassword = (event) => {
         event.preventDefault();
 
@@ -131,6 +135,7 @@ class ResetPage extends Component {
 const mapStateToProps = (state) => ({
   error: state.errors.registrationMessage,
   validToken: state.validToken,
+  successfulPasswordReset: state.successfulPasswordReset
 });
 
 export default withRouter(connect(mapStateToProps)(ResetPage));
