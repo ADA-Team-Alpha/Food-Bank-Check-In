@@ -351,7 +351,7 @@ router.post('/forgot/:token', async (req, res) => {
   }
 });
 
-router.post('/forgot/validate', async (req, res) => {
+router.post('/test', async (req, res) => {
   const token = req.body.token;
   const conn = await pool.connect();
   const profileQuery = {};
@@ -363,11 +363,9 @@ router.post('/forgot/validate', async (req, res) => {
   const now = new Date(Date.now());
 
   if (typeof result.rows[0] !== 'undefined' && now < result.rows[0].reset_password_expires) { //does the user exist?
-    console.log(now)
-    res.sendStatus(200);
+    res.status(200).send({valid: true});
   } else {
-    console.log('Error POST /account/forgot', error);
-    res.sendStatus(500)
+    res.status(200).send({valid: false});
   }
 });
 

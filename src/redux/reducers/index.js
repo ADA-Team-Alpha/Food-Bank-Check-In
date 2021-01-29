@@ -2,7 +2,7 @@ import { combineReducers } from "redux";
 import login from "./loginReducer";
 import errors from "./errorsReducer";
 import account from "./accountReducer";
-import token from "./tokenReducer";
+import validToken from "./tokenReducer";
 import staff from "./staffReducer";
 import completeOrders from "./completeOrdersReducer";
 import waitTime from "./waitTimeReducer";
@@ -20,7 +20,7 @@ const rootReducer = combineReducers({
   login,
   errors,
   account,
-  token,
+  validToken,
   waitTime,
   pendingAccounts,
   staff,

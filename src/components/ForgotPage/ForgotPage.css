@@ -1,6 +1,6 @@
 #card {
   width: 350px;
-  height: 260px;
+  height: 300px;
   margin: 30px auto;
   border-radius: 15px;
   border-bottom: 1px solid lightgray;
@@ -18,16 +18,16 @@
   margin-top: 8px;
 }
 
-#forgotTitle {
+#title {
   font-size: 25px;
   font-family: 'Signika', sans-serif;
 }
 
-#forgotRow {
+#row {
   text-align: center;
 }
 
-#forgotPasswordButton {
+#submitButton {
   color: white;
   font-size: 15px;
   background-color: #b13324;
@@ -40,7 +40,7 @@
   margin-bottom: 20px;
 }
 
-#forgotPasswordButton:hover {
+#submitButton:hover {
   border: 1px solid white;
   transition: 200ms;
 }
@@ -71,4 +71,12 @@
 
 #errorDiv {
   margin: auto;
+}
+
+.false {
+  color: #b13324;
+}
+
+.true {
+  color: green;
 }

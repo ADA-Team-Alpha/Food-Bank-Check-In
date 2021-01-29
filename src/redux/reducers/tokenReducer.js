@@ -1,4 +1,4 @@
-const tokenReducer = (state = {}, action) => {
+const tokenReducer = (state = false, action) => {
   switch (action.type) {
     case "SET_TOKEN_VALID":
       return true;
