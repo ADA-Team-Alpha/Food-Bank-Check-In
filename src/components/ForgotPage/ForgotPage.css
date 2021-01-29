@@ -27,7 +27,7 @@
   text-align: center;
 }
 
-#submitButton {
+#formButton {
   color: white;
   font-size: 15px;
   background-color: #b13324;
@@ -40,7 +40,7 @@
   margin-bottom: 20px;
 }
 
-#submitButton:hover {
+#formButton:hover {
   border: 1px solid white;
   transition: 200ms;
 }

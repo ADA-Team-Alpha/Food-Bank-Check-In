@@ -95,7 +95,7 @@ class ResetPage extends Component {
                         type="submit"
                         name="submit"
                         value="Reset"
-                        id="submitButton"
+                        id="formButton"
                       />
                     </div>
                     {/* If there were to be an error, this is where it is displayed. */}
@@ -108,7 +108,14 @@ class ResetPage extends Component {
                     </div>
                   </form>
                 :
-                    <p>False</p>
+                    <>
+                      <div id="welcomeDiv">
+                        <h1 id="title">Invalid Token</h1>
+                        <AssignmentIcon />
+                      </div>
+                      <div id="forgotDiv">
+                      </div>
+                    </>
                 }
                 </Card>
               </Row>

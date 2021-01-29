@@ -88,7 +88,7 @@ class ForgotPage extends Component {
                         type="submit"
                         name="submit"
                         value="Send Email"
-                        id="submitButton"
+                        id="formButton"
                       />
                     </div>
                     {/* If there were to be an error, this is where it is displayed. */}
