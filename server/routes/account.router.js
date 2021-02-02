@@ -351,6 +351,8 @@ router.post('/change_password', async (req, res) => {
       await conn.query(profileQuery.text, profileQuery.values);
       await conn.query('COMMIT');
     }
+
+    res.sendStatus(200);
   } catch (error) {
     conn.query('ROLLBACK');
     console.log('Error POST /account/forgot', error);

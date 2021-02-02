@@ -37,13 +37,13 @@ function* resetPassword(action) {
     yield put({type: "CLEAR_PASSWORD_RESET_ERROR_MESSAGE"});
 
     yield axios.post("/api/account/change_password/", action.payload);
-    
+
     //Switches to Login Page
     yield put({ type: "DISPLAY_SUCCESSFUL_PASSWORD_RESET_MESSAGE" });
-    yield put({type: "SET_SUCCESSFULL_PASSWORD_RESET"})
+    yield put({ type: "SET_SUCCESSFUL_PASSWORD_RESET" });
   } catch (error) {
     console.log("Error with password reset:", error);
-    yield put({type: "SET_FAILED_PASSWORD_RESET"})
+    yield put({ type: "SET_FAILED_PASSWORD_RESET" });
     yield put({ type: "DISPLAY_FAILED_PASSWORD_RESET_MESSAGE" });
   }
 }

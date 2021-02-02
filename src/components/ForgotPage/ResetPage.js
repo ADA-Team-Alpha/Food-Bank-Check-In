@@ -38,7 +38,7 @@ class ResetPage extends Component {
 
         const { token } = this.props.match.params;
         if (this.state.newPassword && this.state.newPasswordRetyped === this.state.newPassword) {
-            this.props.dispatch({
+          this.props.dispatch({
                 type: "RESET_PASSWORD",
                 payload: {
                     token: token,
@@ -46,7 +46,7 @@ class ResetPage extends Component {
                 },
             });
         } else {
-            this.props.dispatch({ type: "RESET_ERROR" });
+            this.props.dispatch({ type: "DISPLAY_FAILED_PASSWORD_RESET_MESSAGE" });
         }
     };
 
@@ -57,6 +57,7 @@ class ResetPage extends Component {
     };
 
     render() {
+        console.log(this.props)
         const validToken = this.props.validToken;
         const passwordsMatch = this.state.newPasswordRetyped === this.state.newPassword;
         return (
@@ -133,7 +134,7 @@ class ResetPage extends Component {
 const mapStateToProps = (state) => ({
   error: state.errors.passwordResetMessage,
   validToken: state.passwordReset.validTokenStatus,
-  successfulPasswordReset: state.passwordReset.resetPasswordStatus
+  successfulPasswordReset: state.passwordReset.passwordResetStatus
 });
 
 export default withRouter(connect(mapStateToProps)(ResetPage));
