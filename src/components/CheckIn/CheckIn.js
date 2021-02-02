@@ -133,11 +133,12 @@ class CheckIn extends React.Component {
                       <div id="clientQuestions">
                         <p className="mb-1" id="lastStep">Final Step</p>
                         <p><i>Check all that are true</i></p>
-                        <label htmlFor="showTextArea" className="checkboxLabel">
+                        <label htmlFor="personPickingUp" className="checkboxLabel">
                           Is there another person picking up <br /> the order?
                           <input
                             type="checkbox"
                             className="check"
+                            id="personPickingUp"
                             checked={this.state.showTextArea}
                             onChange={() => {
                               this.setState({
@@ -187,7 +188,7 @@ class CheckIn extends React.Component {
                           ></textarea>
                         </label>
                         <br></br>
-                        <label htmlFor="walking" className="checkboxLabel">
+                        <label htmlFor="walkingHome" className="checkboxLabel">
                           Are you walking home?
                           <input
                             type="checkbox"
@@ -201,7 +202,7 @@ class CheckIn extends React.Component {
                           />
                         </label>
                         <br></br>
-                        <label htmlFor="birthday" className="checkboxLabel">
+                        <label htmlFor="childBirthday" className="checkboxLabel">
                           Is there a child in the household with a birthday in the
                           next 2 months?
                           <input
