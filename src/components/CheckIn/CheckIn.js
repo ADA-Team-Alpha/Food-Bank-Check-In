@@ -64,7 +64,7 @@ class CheckIn extends React.Component {
           {!this.props.account.approved ?
             <h4>Sorry, your account needs to be approved by the staff before you can place an order.</h4>
             :
-            moment(this.props.account.latest_order.checkin_at).isSame(new Date(), "day") ?
+              this.props.account.latest_order && moment(this.props.account.latest_order.checkin_at).isSame(new Date(), "day") ?
               <h4>Sorry, you can't place another order until at least tomorrow.</h4>
               :
               <>
