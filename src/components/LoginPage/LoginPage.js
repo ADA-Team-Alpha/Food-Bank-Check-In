@@ -40,6 +40,11 @@ class LoginPage extends Component {
   };
   // end login
 
+  componentDidMount() {
+        this.props.dispatch({type: "DISPLAY_SUCCESSFUL_PASSWORD_RESET_MESSAGE"})
+
+  }
+
   // Setting state based on the user input so we can dispatch that info
   handleInputChangeFor = (propertyName) => (event) => {
     this.setState({
@@ -48,6 +53,7 @@ class LoginPage extends Component {
   };
 
   render() {
+    console.log(this.props)
     return (
       <div id="loginBody">
         <Container id="loginContainer">
@@ -92,6 +98,25 @@ class LoginPage extends Component {
                 </form>
               </Card>
           </Row>
+          {/* If there were to be an error, this is where it would display. */}
+          <Row>
+            <div id="errorDiv">
+              {this.props.errors.loginMessage && (
+                <Toast animation="true" style={{ border: "1px solid #b13324" }}>
+                  <Toast.Body>{this.props.errors.loginMessage}</Toast.Body>
+                </Toast>
+              )}
+            </div>
+          </Row>
+          <Row>
+            <div id="messageDiv">
+              {this.props.passwordResetMessage && (
+                <Toast animation="true" style={{ border: "1px solid green" }}>
+                  <Toast.Body>{this.props.passwordResetMessage}</Toast.Body>
+                </Toast>
+              )}
+            </div>
+          </Row>
           <Row>
             <center id="center">
               <p>Don't have an account?{" "}
@@ -107,16 +132,6 @@ class LoginPage extends Component {
               </p>
             </center>
           </Row>
-          {/* If there were to be an error, this is where it would display. */}
-          <Row>
-            <div id="errorDiv">
-              {this.props.errors.loginMessage && (
-                <Toast animation="true" style={{ border: "1px solid #b13324" }}>
-                  <Toast.Body>{this.props.errors.loginMessage}</Toast.Body>
-                </Toast>
-              )}
-            </div>
-          </Row>
         </Container>
       </div>
     );
@@ -126,6 +141,7 @@ class LoginPage extends Component {
 // Bringing in the errorReducers to handle errors like incorrect login information
 const mapStateToProps = (state) => ({
   errors: state.errors,
+  passwordResetMessage: state.passwordReset.passwordResetMessage
 });
 
 export default connect(mapStateToProps)(LoginPage);

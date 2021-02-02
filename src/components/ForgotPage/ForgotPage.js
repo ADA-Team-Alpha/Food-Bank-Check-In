@@ -44,8 +44,6 @@ class ForgotPage extends Component {
   };
 
   handleInputChangeFor = (propertyName) => (event) => {
-        this.props.dispatch({ type: "DISPLAY_FAILED_PASSWORD_RESET_MESSAGE" });
-
     this.setState({
       [propertyName]: event.target.value,
     });
