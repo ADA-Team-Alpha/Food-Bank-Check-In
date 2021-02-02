@@ -307,7 +307,7 @@ router.post('/forgot', async (req, res) => {
         to: email,
         from: process.env.DEFAULT_FROM_EMAIL,
         subject: 'Emergency Food Pantry Password Reset',
-        html: `Click <a href='${process.env.HOST}/#/forgot/${resetToken}'>here</a> to reset your password.`,
+        html: `Click <a href='${process.env.EMAIL_HOST}/#/forgot/${resetToken}'>here</a> to reset your password.`,
       }
       sgMail
         .send(msg)

@@ -58,6 +58,7 @@ class ResetPage extends Component {
 
     render() {
         const validToken = this.props.validToken;
+        console.log(this.props)
         const passwordsMatch = this.state.newPasswordRetyped === this.state.newPassword;
         return (
             <div id="forgotBody">
@@ -129,13 +130,11 @@ class ResetPage extends Component {
     }
 }
 
-// Bringing in the errors for error handling, successfulRegistration 
-// to push history to /login, and loginMode so as soon as a new user
-// registers they are then logged in automatically.
+
 const mapStateToProps = (state) => ({
-  error: state.errors.registrationMessage,
-  validToken: state.validToken,
-  successfulPasswordReset: state.successfulPasswordReset
+  error: state.errors.passwordResetMessage,
+  validToken: state.passwordReset.validTokenStatus,
+  successfulPasswordReset: state.passwordReset.resetPasswordStatus
 });
 
 export default withRouter(connect(mapStateToProps)(ResetPage));
