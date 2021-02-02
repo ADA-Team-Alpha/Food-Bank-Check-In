@@ -6,6 +6,7 @@ function* loginUser(action) {
   try {
     // clear any existing error on the login page
     yield put({ type: "CLEAR_LOGIN_ERROR" });
+    yield put({ type: "CLEAR_PASSWORD_RESET_MESSAGE"});
 
     const config = {
       headers: { "Content-Type": "application/json" },

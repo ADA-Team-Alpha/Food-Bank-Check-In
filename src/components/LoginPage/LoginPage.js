@@ -40,11 +40,7 @@ class LoginPage extends Component {
   };
   // end login
 
-  componentDidMount() {
         this.props.dispatch({type: "DISPLAY_SUCCESSFUL_PASSWORD_RESET_MESSAGE"})
-
-  }
-
   // Setting state based on the user input so we can dispatch that info
   handleInputChangeFor = (propertyName) => (event) => {
     this.setState({
@@ -53,7 +49,6 @@ class LoginPage extends Component {
   };
 
   render() {
-    console.log(this.props)
     return (
       <div id="loginBody">
         <Container id="loginContainer">

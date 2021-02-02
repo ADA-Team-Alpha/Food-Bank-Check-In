@@ -4,6 +4,8 @@ import axios from "axios";
 // worker Saga: will be fired on "RESET_PASSWORD_EMAIL" actions
 function* resetPasswordEmail(action) {
   try {
+    yield put( {type: "CLEAR_PASSWORD_RESET_ERROR_MESSAGE" }); 
+
     // passes the and password from the payload to the server
     yield axios.post("/api/account/forgot", action.payload);
 
@@ -16,6 +18,7 @@ function* resetPasswordEmail(action) {
 
 function* validateToken(action) {
   try {
+    yield put({type: "CLEAR_PASSWORD_RESET_ERROR_MESSAGE"});
     const response = yield axios.post("/api/account/validate_token", action.payload);
     if (response.data.valid) {
       yield put({type: "SET_TOKEN_VALID"});
@@ -31,6 +34,8 @@ function* validateToken(action) {
 
 function* resetPassword(action) {
   try {
+    yield put({type: "CLEAR_PASSWORD_RESET_ERROR_MESSAGE"});
+
     yield axios.post("/api/account/change_password/", action.payload);
     
     //Switches to Login Page
