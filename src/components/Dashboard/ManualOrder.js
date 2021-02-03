@@ -140,6 +140,7 @@ class ManualOrder extends Component {
           <Form.Row xs={12}>
             <>
               <div id="clientQuestions">
+                <p className="mt-2 mb-0"><i>Check all that are true</i></p>
                 <label id="idManualLabel" htmlFor="houseHoldIdManual">
                   Enter Household ID:
                   <br></br>
@@ -283,7 +284,7 @@ class ManualOrder extends Component {
                 </label>
                 <br></br>
                 <label htmlFor="pregnant" className="checkboxLabel">
-                  Is there a woman in the household who is pregnant?
+                  Is a woman in your home pregnant and need prenatal vitamins?
                   <input
                     type="checkbox"
                     id="pregnant"
