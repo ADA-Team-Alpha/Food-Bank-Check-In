@@ -25,6 +25,9 @@ class ForgotPage extends Component {
       email: "",
     };
   }
+  componentDidUpdate() {
+    this.props.passwordResetMessage && this.props.history.push("/login");
+  }
 
   resetPasswordEmail = (event) => {
     event.preventDefault();
@@ -36,8 +39,6 @@ class ForgotPage extends Component {
           email: this.state.email,
         },
       });
-
-      this.props.history.push("/login");
     } else {
       this.props.dispatch({ type: "RESET_ERROR" });
     }
@@ -110,6 +111,7 @@ class ForgotPage extends Component {
 // Bringing in the errors for error handling
 const mapStateToProps = (state) => ({
   error: state.errors.passwordResetMessage,
+  passwordResetMessage: state.passwordReset.passwordResetMessage
 });
 
 export default withRouter(connect(mapStateToProps)(ForgotPage));

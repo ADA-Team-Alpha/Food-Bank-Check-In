@@ -9,6 +9,7 @@ function* resetPasswordEmail(action) {
     // passes the and password from the payload to the server
     yield axios.post("/api/account/forgot", action.payload);
 
+    yield put({ type: "DISPLAY_PASSWORD_RESET_EMAIL_MESSAGE" });
   } catch (error) {
     console.log("Error with password reset:", error);
     yield put({ type: "SET_FAILED_PASSWORD_RESET" })
@@ -18,6 +19,7 @@ function* resetPasswordEmail(action) {
 
 function* validateToken(action) {
   try {
+    yield put({ type: "CLEAR_PASSWORD_RESET_MESSAGE"});
     yield put({type: "CLEAR_PASSWORD_RESET_ERROR_MESSAGE"});
     const response = yield axios.post("/api/account/validate_token", action.payload);
     if (response.data.valid) {

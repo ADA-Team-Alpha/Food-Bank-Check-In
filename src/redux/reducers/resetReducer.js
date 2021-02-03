@@ -26,6 +26,8 @@ const passwordResetMessage = ((state = "", action) => {
   switch (action.type) {
     case "DISPLAY_SUCCESSFUL_PASSWORD_RESET_MESSAGE":
       return "You have successfully reset your password!";
+    case "DISPLAY_PASSWORD_RESET_EMAIL_MESSAGE":
+      return "If the email address you entered is linked to an account, you should get a email with a reset link.";
     case "CLEAR_PASSWORD_RESET_MESSAGE":
       return "";
     default:
