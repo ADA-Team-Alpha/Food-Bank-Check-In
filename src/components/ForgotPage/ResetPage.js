@@ -57,7 +57,6 @@ class ResetPage extends Component {
     };
 
     render() {
-        console.log(this.props)
         const validToken = this.props.validToken;
         const passwordsMatch = this.state.newPasswordRetyped === this.state.newPassword;
         return (
