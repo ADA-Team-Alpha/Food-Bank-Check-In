@@ -1,4 +1,5 @@
 const bcrypt = require('bcryptjs');
+const crypto = require('crypto');
 
 const SALT_WORK_FACTOR = 10; // This determines how secure the salt should be
 
@@ -19,7 +20,13 @@ const comparePassword = (candidatePassword, storedPassword) => {
   return bcrypt.compareSync(candidatePassword, storedPassword);
 };
 
+const generateToken = (byteLength) => {
+  let token = crypto.randomBytes(byteLength).toString('hex');
+  return token;
+};
+
 module.exports = {
   encryptPassword,
-  comparePassword
+  comparePassword,
+  generateToken
 };

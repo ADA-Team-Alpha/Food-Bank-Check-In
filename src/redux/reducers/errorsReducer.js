@@ -32,6 +32,17 @@ const registrationMessage = (state = "", action) => {
   }
 };
 
+const passwordResetMessage = ((state = "", action) => {
+  switch (action.type) {
+    case "DISPLAY_FAILED_PASSWORD_RESET_MESSAGE":
+      return "For some reason, we could not reset your password.";
+    case "CLEAR_PASSWORD_RESET_ERROR_MESSAGE":
+      return "";
+    default:
+      return state;
+  }
+});
+
 // orderMessage holds the string that will display
 // at the end of a client check-in if there's an error
 // checking them in
@@ -98,5 +109,6 @@ export default combineReducers({
   orderMessage,
   staffPlaceOrderMessage,
   staffGetOrderMessage,
-  staffGetPendingAccountsMessage
+  staffGetPendingAccountsMessage,
+  passwordResetMessage
 });

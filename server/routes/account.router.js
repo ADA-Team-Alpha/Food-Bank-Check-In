@@ -7,6 +7,8 @@ const encryptLib = require('../modules/encryption');
 const pool = require('../modules/pool');
 const userStrategy = require('../strategies/user.strategy');
 const sqlSelect = require('../sql/sqlSelects');
+const sgMail = require('@sendgrid/mail')
+sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 
 // Handles Ajax request for user information if user is authenticated/signed in.
 router.get('/', rejectUnauthenticated, (req, res) => {
@@ -271,6 +273,110 @@ router.delete('/:id', rejectUnauthenticated, async (req, res) => {
     res.sendStatus(500);
   } finally {
     conn.release();
+  }
+});
+
+// Handles POST request when a tries to send a password reset email.
+router.post('/forgot', async (req, res) => {
+  const email = req.body.email;
+  if (!email) {
+    res.sendStatus(400);
+    return;
+  }
+  const conn = await pool.connect();
+  try {
+    const profileQuery = {};
+    profileQuery.text = `SELECT id, name FROM "account" 
+                         WHERE email = $1;`;
+    profileQuery.values = [email];
+    const result = await conn.query(profileQuery.text, profileQuery.values);
+    if (typeof result.rows[0] !== 'undefined') { //does the user exist?
+      const resetToken = encryptLib.generateToken(20);
+      const expirationDate = new Date(Date.now() + 3600000); //1 hour
+      profileQuery.text = `UPDATE account SET 
+                              reset_password_token = $1, 
+                              reset_password_expires = $2 
+                              WHERE id = $3`; 
+      profileQuery.values = [resetToken, expirationDate, result.rows[0].id];
+      await conn.query('BEGIN');
+      await conn.query(profileQuery.text, profileQuery.values);
+      await conn.query('COMMIT');
+
+      //send email
+      const msg = {
+        to: email,
+        from: process.env.DEFAULT_FROM_EMAIL,
+        subject: 'Emergency Food Pantry Password Reset',
+        html: `Click <a href='${process.env.EMAIL_HOST}/#/forgot/${resetToken}'>here</a> to reset your password.`,
+      }
+      sgMail
+        .send(msg)
+        .then(() => {
+          console.log('Email sent');
+        })
+        .catch((error) => {
+          console.error("Error sending email: ", error);
+        })
+    }
+    res.status(200).send(result.rows[0]);
+  } catch (error) {
+    conn.query('ROLLBACK');
+    console.log('Error POST /account/forgot', error);
+    res.sendStatus(500);
+  } finally {
+    conn.release();
+  }
+});
+
+
+router.post('/change_password', async (req, res) => {
+  const token = req.body.token;
+  const newPassword = encryptLib.encryptPassword(req.body.newPassword);
+  const now = new Date(Date.now());
+
+  const conn = await pool.connect();
+  try {
+    const profileQuery = {};
+    profileQuery.text = `SELECT id, reset_password_expires FROM "account" 
+                         WHERE reset_password_token = $1;`;
+    profileQuery.values = [token];
+    const result = await conn.query(profileQuery.text, profileQuery.values);
+    if (typeof result.rows[0] !== 'undefined' && now < result.rows[0].reset_password_expires) { //does the user exist?
+      profileQuery.text = `UPDATE account SET 
+                              password = $1, 
+                              reset_password_expires = $2 
+                              WHERE id = $3`; 
+      profileQuery.values = [newPassword, now, result.rows[0].id];
+      await conn.query('BEGIN');
+      await conn.query(profileQuery.text, profileQuery.values);
+      await conn.query('COMMIT');
+    }
+
+    res.sendStatus(200);
+  } catch (error) {
+    conn.query('ROLLBACK');
+    console.log('Error POST /account/forgot', error);
+    res.sendStatus(500);
+  } finally {
+    conn.release();
+  }
+});
+
+router.post('/validate_token', async (req, res) => {
+  const token = req.body.token;
+  const conn = await pool.connect();
+  const profileQuery = {};
+  profileQuery.text = `SELECT id, reset_password_expires FROM "account" 
+                        WHERE reset_password_token = $1;`;
+  profileQuery.values = [token];
+  const result = await conn.query(profileQuery.text, profileQuery.values);
+  conn.release();
+  const now = new Date(Date.now());
+
+  if (typeof result.rows[0] !== 'undefined' && now < result.rows[0].reset_password_expires) { //does the user exist?
+    res.status(200).send({valid: true});
+  } else {
+    res.status(200).send({valid: false});
   }
 });
 
