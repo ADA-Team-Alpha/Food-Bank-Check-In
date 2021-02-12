@@ -8,6 +8,8 @@ CREATE TABLE "account" (
 	"access_level" integer NOT NULL DEFAULT '1',
 	"active" BOOLEAN NOT NULL DEFAULT 'true',
 	"approved" BOOLEAN NOT NULL DEFAULT 'false',
+	"reset_password_token" varchar(320),
+	"reset_password_expires" TIMESTAMP,  
 	CONSTRAINT "account_pk" PRIMARY KEY ("id")
 ) WITH (
   OIDS=FALSE

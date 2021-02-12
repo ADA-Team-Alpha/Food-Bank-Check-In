@@ -64,7 +64,7 @@ class CheckIn extends React.Component {
           {!this.props.account.approved ?
             <h4>Sorry, your account needs to be approved by the staff before you can place an order.</h4>
             :
-            moment(this.props.account.latest_order.checkin_at).isSame(new Date(), "day") ?
+              this.props.account.latest_order && moment(this.props.account.latest_order.checkin_at).isSame(new Date(), "day") ?
               <h4>Sorry, you can't place another order until at least tomorrow.</h4>
               :
               <>
@@ -131,12 +131,14 @@ class CheckIn extends React.Component {
                     <>
                       <br />
                       <div id="clientQuestions">
-                        <p id="lastStep">Final Step</p>
-                        <label htmlFor="showTextArea" className="checkboxLabel">
+                        <p className="mb-1" id="lastStep">Final Step</p>
+                        <p><i>Check all that are true</i></p>
+                        <label htmlFor="personPickingUp" className="checkboxLabel">
                           Is there another person picking up <br /> the order?
                           <input
                             type="checkbox"
                             className="check"
+                            id="personPickingUp"
                             checked={this.state.showTextArea}
                             onChange={() => {
                               this.setState({
@@ -186,7 +188,7 @@ class CheckIn extends React.Component {
                           ></textarea>
                         </label>
                         <br></br>
-                        <label htmlFor="walking" className="checkboxLabel">
+                        <label htmlFor="walkingHome" className="checkboxLabel">
                           Are you walking home?
                           <input
                             type="checkbox"
@@ -200,7 +202,7 @@ class CheckIn extends React.Component {
                           />
                         </label>
                         <br></br>
-                        <label htmlFor="birthday" className="checkboxLabel">
+                        <label htmlFor="childBirthday" className="checkboxLabel">
                           Is there a child in the household with a birthday in the
                           next 2 months?
                           <input
@@ -218,7 +220,7 @@ class CheckIn extends React.Component {
                         </label>
                         <br></br>
                         <label htmlFor="pregnant" className="checkboxLabel">
-                          Is there a woman in the household who is pregnant?
+                          Is a woman in your home pregnant and need prenatal vitamins?
                           <input
                             type="checkbox"
                             id="pregnant"

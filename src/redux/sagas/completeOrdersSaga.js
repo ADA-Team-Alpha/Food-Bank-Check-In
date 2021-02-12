@@ -6,7 +6,7 @@ import { put, takeLatest } from 'redux-saga/effects';
 function* fetchCompleteOrders() {
   try {
     yield put({ type: 'CLEAR_UNABLE_TO_GET_ACTIVE_ORDERS_ERROR' });
-    const response = yield axios.get('/api/order/complete/today');
+    const response = yield axios.get('/api/order/complete/');
     yield put({ type: 'SET_COMPLETE_ORDERS', payload: response.data });
   } catch (error) {
     yield put({ type: 'SET_UNABLE_TO_GET_ACTIVE_ORDERS_ERROR' });

@@ -92,14 +92,6 @@ class LoginPage extends Component {
                 </form>
               </Card>
           </Row>
-          <Row>
-            <center id="center">
-              Don't have an account?{" "}
-              <Link to="/register">
-                <button className="changeButton">Register</button>
-              </Link>
-            </center>
-          </Row>
           {/* If there were to be an error, this is where it would display. */}
           <Row>
             <div id="errorDiv">
@@ -110,6 +102,30 @@ class LoginPage extends Component {
               )}
             </div>
           </Row>
+          <Row>
+            <div id="messageDiv">
+              {this.props.passwordResetMessage && (
+                <Toast animation="true" style={{ border: "1px solid green" }}>
+                  <Toast.Body>{this.props.passwordResetMessage}</Toast.Body>
+                </Toast>
+              )}
+            </div>
+          </Row>
+          <Row>
+            <center id="center">
+              <p>Don't have an account?{" "}
+                <Link to="/register">
+                  <button className="changeButton">Register</button>
+                </Link>
+              </p>
+              <p>
+                Forgot your password?{" "}
+                <Link to="/forgot">
+                  <button className="changeButton">Reset Password</button>
+                </Link>
+              </p>
+            </center>
+          </Row>
         </Container>
       </div>
     );
@@ -119,6 +135,7 @@ class LoginPage extends Component {
 // Bringing in the errorReducers to handle errors like incorrect login information
 const mapStateToProps = (state) => ({
   errors: state.errors,
+  passwordResetMessage: state.passwordReset.passwordResetMessage
 });
 
 export default connect(mapStateToProps)(LoginPage);

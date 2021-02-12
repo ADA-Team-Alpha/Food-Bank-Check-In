@@ -8,6 +8,7 @@ import {
 } from 'react-router-dom';
 import { connect } from 'react-redux';
 import RegisterPage from '../RegisterPage/RegisterPage';
+import ForgotPage from '../ForgotPage/ForgotPage'
 import LoginPage from '../LoginPage/LoginPage';
 import Header from '../Header/Header';
 import ProtectedRoute from '../ProtectedRoute/ProtectedRoute';
@@ -21,10 +22,18 @@ import { state } from '../../VariableTitles/VariableTitles';
 // On componentDidMount, 'FETCH_INFO' is dispatched to grab information about the account that is logged in.
 class App extends Component {
   componentDidMount() {
+    //Start Intercom
+    window.Intercom('boot', {
+      app_id: 'pr1cd7v4',
+    });
+
     this.props.dispatch({ type: 'FETCH_INFO' });
   }
 
   render() {
+    //update intercom with each route change
+    window.Intercom("update", {last_request_at: parseInt((new Date()).getTime()/1000)})
+    
     return !this.props.loading ? (
       <Router>
         <div>
@@ -45,6 +54,9 @@ class App extends Component {
             </Route>
             <Route path="/register">
               <RegisterPage />
+            </Route>
+            <Route path="/forgot">
+                <ForgotPage />
             </Route>
             {/* For protected routes, the view could show one of several things on the same route.
               If the user is not logged in, the ProtectedRoute will show the 'Login' or 'Register' page. */}

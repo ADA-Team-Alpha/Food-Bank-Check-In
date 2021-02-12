@@ -13,29 +13,34 @@ import "./Dashboard.css";
 // The Dashboard component is for the dashboard view that is seen by the staff/volunteers
 
 class Dashboard extends Component {
-  // Setting state here for the waitTime for the client 
-  // showClientInfo is used for conditional rendering --> whether the client information is to be
-  // shown, or the manual check-in form
-  state = {
-    orderObj: {
-      id: '',
-      name: '',
-      account_id: '',
-      walking_home: '',
-      child_birthday: '',
-      dietary_restrictions: ' ',
-      snap: '',
-      other: ' ',
-      pickup_name: '',
-      checkout_at: ' ',
-      wait_time_minutes: '15',
-      location_id: '',
-    },
-    waitTimeMinutes: '15',
-    showClientInfo: true,
-    activeInterval: null,
-    completeInterval: null
-  };
+  constructor(props) {
+    super(props);
+
+    // Setting state here for the waitTime for the client 
+    // showClientInfo is used for conditional rendering --> whether the client information is to be
+    // shown, or the manual check-in form
+    this.state = {
+      orderObj: {
+        id: '',
+        name: '',
+        account_id: '',
+        walking_home: '',
+        child_birthday: '',
+        dietary_restrictions: ' ',
+        snap: '',
+        other: ' ',
+        pickup_name: '',
+        checkout_at: ' ',
+        checkin_at: '',
+        wait_time_minutes: '15',
+        location_id: '',
+      },
+      waitTimeMinutes: '15',
+      showClientInfo: true,
+      activeInterval: null,
+      completeInterval: null
+    };
+  }
 
   componentDidMount = () => {
     const activeInterval = setInterval(
@@ -67,36 +72,42 @@ class Dashboard extends Component {
     this.setState({ showClientInfo: !this.state.showClientInfo });
   };
 
-  updateOrderButton = (prompt, waitTimeMinutes) => {
+  clearLocalState = () => {
+    this.setState({
+      orderObj: {
+        id: "",
+        name: "",
+        account_id: "",
+        walking_home: "",
+        child_birthday: "",
+        dietary_restrictions: "",
+        snap: "",
+        other: "",
+        pickup_name: "",
+        checkout_at: "",
+        checkin_at: "",
+        wait_time_minutes: "",
+      },
+      waitTimeMinutes: "15",
+    });
+  }
+
+  updateOrderButton = (prompt, method, waitTimeMinutes) => {
     return (
       <button
         disabled={
           !this.state.orderObj.account_id ||
-          this.state.orderObj.checkout_at
+          (method === "update" && this.state.orderObj.checkout_at)
         }
         id="checkInClient"
-        className="btn btn-large btn-primary"
+        className="btn btn-large btn-primary mr-1"
         onClick={(event) => {
           event.preventDefault();
-          this.setState({
-            orderObj: {
-              id: "",
-              name: "",
-              account_id: "",
-              walking_home: "",
-              child_birthday: "",
-              dietary_restrictions: "",
-              snap: "",
-              other: "",
-              pickup_name: "",
-              checkout_at: "",
-              wait_time_minutes: "",
-            },
-            waitTimeMinutes: "15",
-          });
+          this.clearLocalState();
           this.props.dispatch({
             type: "ORDER_CHECKOUT",
             payload: {
+              method: method,
               id: this.state.orderObj.id,
               waitTimeMinutes: waitTimeMinutes,
             },
@@ -108,7 +119,36 @@ class Dashboard extends Component {
     )
   }
 
+  updateOrderDate = (event) => {
+    let orderObj = {...this.state.orderObj};
+    const checkin = new Date(orderObj.checkin_at);
+    const [year, month, day] = [...event.target.value.split('-')];
+    checkin.setFullYear(year);
+    checkin.setMonth(month - 1);
+    checkin.setDate(day);
+    orderObj.checkin_at = checkin;
+    
+    this.setState({
+      orderObj: orderObj
+    });
+    this.props.dispatch({
+      type: "ORDER_DATE",
+      payload: {
+        id: this.state.orderObj.id,
+        date: event.target.value,
+      },
+    });
+  }
+
   render() {
+    const checkinObj = new Date(this.state.orderObj.checkin_at);
+    let checkinMonth = checkinObj.getMonth() + 1;
+    if (checkinObj.getMonth() < 10) {
+      checkinMonth = "0" + checkinMonth;
+    }
+    const today = (new Date()).toISOString().split("T")[0];
+    const checkin = checkinObj.getFullYear() + "-" + checkinMonth + "-" + checkinObj.getDate();
+
     return (
       <>
         <h4>{this.props.errors.staffGetOrderMessage}</h4>
@@ -170,8 +210,17 @@ class Dashboard extends Component {
                   <form className="dashForm">
                     <div id="secondColHeader">
                       <h1 id="secondColTitle">Client Information</h1>
-                      {this.updateOrderButton('Check In', this.state.waitTimeMinutes)}
-                      {this.updateOrderButton('Decline', null)}
+                      <div className="d-inline">
+                        {this.state.orderObj.checkout_at ? (
+                            <>{this.updateOrderButton('Remove Order', 'delete', null)}</>
+                          )
+                        :(
+                          <>
+                            {this.updateOrderButton('Check In', 'update', this.state.waitTimeMinutes)}
+                            {this.updateOrderButton('Decline', 'update', null)}
+                          </>
+                        )}
+                      </div>
                     </div>
                     {this.state.orderObj.id ? (
                       <>
@@ -207,7 +256,7 @@ class Dashboard extends Component {
                             </b>
                           </p>
                           <p className="clientInformation">
-                            Someone at home is pregnant:{" "}
+                            Is a woman in your home pregnant and need prenatal vitamins?{" "}
                             <b>
                               {this.state.orderObj.child_birthday
                                 ? "Yes"
@@ -230,7 +279,7 @@ class Dashboard extends Component {
                             <b>{this.state.orderObj.other || "None"}</b>
                           </p>
                         </body>
-                        <label id="waitTimeLabel" for="waitTime">
+                        <label id="waitTimeLabel" htmlFor="waitTime">
                           {!this.state.orderObj.checkout_at &&
                             "Please choose a wait time: "}
                           <select
@@ -260,6 +309,18 @@ class Dashboard extends Component {
                                 </>
                               )}
                           </select>
+                        </label>  
+                        <hr/>
+                        <label id="orderDateLabel" htmlFor="orderDate" className="clientInformation">
+                              Order Date: 
+                              <input type="date" value={checkin} 
+                                onChange={(event) => {this.updateOrderDate(event)}}
+                                disabled={
+                                  !this.state.orderObj.account_id ||
+                                  !this.state.orderObj.checkout_at
+                                }
+                                min={today}>
+                              </input>
                         </label>
                       </> // Conditional rendering here --> If there is no name selected from the first column,
                     ) : (

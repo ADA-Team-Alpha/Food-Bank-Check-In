@@ -1,6 +1,6 @@
-#loginCard {
+#card {
   width: 350px;
-  height: 350px;
+  height: 300px;
   margin: 30px auto;
   border-radius: 15px;
   border-bottom: 1px solid lightgray;
@@ -14,20 +14,20 @@
   padding-bottom: 20px;
 }
 
-#inputDiv {
-  margin-top: 50px;
+#forgotDiv {
+  margin-top: 8px;
 }
 
-#login {
+#title {
   font-size: 25px;
   font-family: 'Signika', sans-serif;
 }
 
-#loginRow {
+#row {
   text-align: center;
 }
 
-#loginButton {
+#formButton {
   color: white;
   font-size: 15px;
   background-color: #b13324;
@@ -37,39 +37,15 @@
   transition: 200ms;
   font-family: 'Signika', sans-serif;
   margin-top: 10px;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
 }
 
-#loginButton:hover {
+#formButton:hover {
   border: 1px solid white;
   transition: 200ms;
 }
 
-.changeButton {
-  font-size: 15px;
-  color: white;
-  background-color: #faaf46;
-  border: 1px solid #faaf46;
-  border-radius: 50px;
-  transition: 200ms; 
-  font-family: 'Signika', sans-serif;
-}
-
-.changeButton:hover {
-  border: 1px solid white;
-  transition: 200ms; 
-}
-
-.label {
-  display: inline-block;
-  clear: left;
-  width: 250px;
-  text-align: right;
-  font-family: 'Signika', sans-serif; 
-  font-size: 16px;
-}
-
-.userLoginInput {
+.formInput {
   display: inline-block;
   margin: 10px;
   font-size: 16px;
@@ -81,21 +57,26 @@
   transition: 200ms;
 }
 
-.userLoginInput:hover {
+.formInput:hover {
   background-color: white;
   border: 1px solid #b13324;
   transition: 200ms;
 }
 
 #center {
-  margin: auto;
+  margin-top: 50px;
   font-family: 'Signika', sans-serif;
   font-size: 16px;
-  padding-bottom: 30px;
 }
 
-#errorDiv, #messageDiv {
+#errorDiv {
   margin: auto;
-  margin-top: 10px;
-  margin-bottom: 10px;
+}
+
+.false {
+  color: #b13324;
+}
+
+.true {
+  color: green;
 }

@@ -22,7 +22,19 @@ const successfulRegistration = (state = "", action) => {
   }
 };
 
+const successfulPasswordReset = (state = "", action) => {
+  switch (action.type) {
+    case "DISPLAY_SUCCESSFUL_RESET_MESSAGE":
+      return "You successfully reset your password.";
+    case "CLEAR_SUCCESSFUL_RESET_MESSAGE":
+      return "";
+    default:
+      return state;
+  }
+};
+
 export default combineReducers({
   loginMode,
-  successfulRegistration
+  successfulRegistration,
+  successfulPasswordReset
 });
