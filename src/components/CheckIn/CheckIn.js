@@ -60,7 +60,7 @@ class CheckIn extends React.Component {
                     this.props.account.latest_order.checkout_at ?
                       moment(
                         this.props.account.latest_order.checkout_at
-                      ).format("yyyy-MM-DD")
+                      ).format("MM-DD-yyyy")
                       : 'Declined'
                     : "Never"}
                 </strong>
