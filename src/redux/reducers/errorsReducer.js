@@ -53,7 +53,7 @@ const orderMessage = (state = "", action) => {
     case "SET_RETRIEVE_ACTIVE_ORDER_ERROR":
       return 'Sorry, unable to update your order status. Someone will be with you shortly.';
     case "SET_ORDER_DECLINED_ERROR":
-      return 'Sorry, your order has been declined. If you believe this to be a mistake please speak with someone from the Food Pantry.';
+      return 'declined';
     case "CLEAR_ORDER_PLACEMENT_ERROR":
       return '';
     default:
