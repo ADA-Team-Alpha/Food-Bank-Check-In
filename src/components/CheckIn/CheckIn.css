@@ -183,7 +183,7 @@ textarea {
   font-weight: bolder; 
 }
 
-#waitTime {
+#waitTime, #doorMessage {
   font-size: 23px;
   color: #424B54;
 }

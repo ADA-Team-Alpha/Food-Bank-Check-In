@@ -28,6 +28,15 @@ class CheckIn extends React.Component {
   };
 
   render() {
+    let errorMessage = <h3>${this.props.errors.orderMessage}</h3>;
+    if (this.props.errors.orderMessage === 'declined') {
+      errorMessage = 
+          <>
+            <p>You are not eligible for a food basket today.</p>
+            <p>We offer food baskets every other month. Please see Last Pickup date above so you know when you can get your next food basket.</p>
+            <p>You can learn about other food basket options, by contacting FirstLink. Their phone number is 701-235-7335 or 2-1-1.</p>
+          </>;
+    }
     return (
       <>
         <Container id="checkInContainer" fluid>
@@ -51,7 +60,7 @@ class CheckIn extends React.Component {
                     this.props.account.latest_order.checkout_at ?
                       moment(
                         this.props.account.latest_order.checkout_at
-                      ).format("yyyy-MM-DD")
+                      ).format("MM-DD-yyyy")
                       : 'Declined'
                     : "Never"}
                 </strong>
@@ -309,21 +318,19 @@ class CheckIn extends React.Component {
                 {this.state.showSuccess && (
                   <div id="thankYou">
                     {this.props.errors.orderMessage ? (
-                      <h3>{this.props.errors.orderMessage}</h3>
-                    ) : (
+                        <>{errorMessage}</>
+                      ) : (
                         <>
-                          <h3 id="thankYouMessage">Thank you, we have received your order!</h3>
+                          <h3 id="thankYouMessage">Thank you, we have received your message!</h3>
                           <p id="waitTime">
-                            We will be with you in about:
-                          <br />{" "}
-                            {`${
-                              this.props.waitTime
-                                ? `${this.props.waitTime} minutes.`
-                                : "Processing..."
-                              }`}
+                            {this.props.waitTime 
+                              ? <>Your food basket will be ready in approximately <br/>{this.props.waitTime} minutes</>
+                              : <>We will message you soon to let you know if you are eligible.<br/>Processing...</>
+                            }
                           </p>
                           {this.props.waitTime && (
                             <>
+                              <p id="doorMessage">We will call you to meet us at the front door when your basket is ready.</p>
                               <p id="logOutPrompt">You may now log out.</p>
                               <button
                                 id="thankYouLogout"
